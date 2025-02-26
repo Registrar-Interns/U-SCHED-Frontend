@@ -56,6 +56,9 @@ import { ReactComponent as HomeIcon } from "./home.svg?react";
 import { ReactComponent as AcademicCapIcon } from "./academic-cap.svg?react";
 import { ReactComponent as CurriculumIcon } from "./curriculum-icon.svg?react";
 import { ReactComponent as AuditIcon } from "./audit.svg?react";
+import { ReactComponent as SettingIcon } from "./setting-config.svg?react";
+import { ReactComponent as GenerateIcon } from "./generate.svg?react";
+import { ReactComponent as UploadIcon } from "./upload.svg?react";
 
 export {
   ErrorHexaIcon,
@@ -116,4 +119,7 @@ export {
   AcademicCapIcon,
   CurriculumIcon,
   AuditIcon,
+  SettingIcon,
+  GenerateIcon,
+  UploadIcon,
 };

@@ -1,10 +1,10 @@
-import { UserIcon, GroupIcon, HomeIcon, AcademicCapIcon } from "../../icons";
+import { UserIcon, GroupIcon, HomeIcon } from "../../icons";
 
 const metrics = [
   { id: 1, icon: <UserIcon className="w-10 h-10 text-gray-800 dark:text-white" />, value: "148", label: "Professors" },
   { id: 2, icon: <GroupIcon className="w-10 h-10 text-gray-800 dark:text-white" />, value: "180", label: "Sections" },
   { id: 3, icon: <HomeIcon className="w-10 h-10 text-gray-800 dark:text-white" />, value: "80", label: "Rooms" },
-  { id: 4, icon: <AcademicCapIcon className="w-10 h-10 text-gray-800 dark:text-white" />, value: "340", label: "Courses" },
+  // { id: 4, icon: <AcademicCapIcon className="w-10 h-10 text-gray-800 dark:text-white" />, value: "340", label: "Courses" },
 ];
 
 export default function DashboardMetrics() {

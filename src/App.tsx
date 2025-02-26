@@ -15,6 +15,14 @@ import Blank from "./pages/Blank";
 import AppLayout from "./layout/AppLayout";
 import { ScrollToTop } from "./components/common/ScrollToTop";
 import Home from "./pages/Dashboard/Home";
+import AuditLog from "./pages/AuditLog/AuditLog";
+import RequireAuth from "./components/auth/RequireAuth";
+
+// Curriculum Pages
+import BSIT from "./pages/CurriculumPage/Department/CCS/BSIT";
+import BSCS from "./pages/CurriculumPage/Department/CCS/BSCS";
+import BSIE from "./pages/CurriculumPage/Department/COE/BSIE";
+import BSCPE from "./pages/CurriculumPage/Department/COE/BSCPE";
 
 export default function App() {
   return (
@@ -29,8 +37,15 @@ export default function App() {
           <Route path="/signin" element={<SignIn />} />
 
           {/* Dashboard Layout */}
-          <Route element={<AppLayout />}>
+          <Route element={<RequireAuth><AppLayout /></RequireAuth>}>
             <Route path="/dashboard" element={<Home />} />
+            <Route path="/audit-log" element={<AuditLog />} />
+
+            {/* Curriculum Routes */}
+            <Route path="/department/ccs/bsit" element={<BSIT />} />
+            <Route path="/department/ccs/bscs" element={<BSCS />} />
+            <Route path="/department/coe/bsie" element={<BSIE />} />
+            <Route path="/department/coe/bscpe" element={<BSCPE />} />
 
             {/* Other Pages */}
             <Route path="/profile" element={<UserProfiles />} />

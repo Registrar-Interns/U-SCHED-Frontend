@@ -6,6 +6,8 @@ import {
   AcademicCapIcon,
   CurriculumIcon,
   AuditIcon,
+  HomeIcon,
+  GenerateIcon,
 } from "../icons";
 import { useSidebar } from "../context/SidebarContext";
 
@@ -27,14 +29,15 @@ const navItems: NavItem[] = [
   {
     name: "College",
     icon: <AcademicCapIcon />,
-    subItems: [
-      { name: "CCS", path: "/college-css" },
-      { name: "COE", path: "/college-coe" },
-      { name: "CBAA", path: "/college-cbaa" },
-      { name: "COED", path: "/college-coed" },
-      { name: "CHAS", path: "/college-chas" },
-      { name: "CAS", path: "/college-cas" },
-    ],
+    path: "/colleges",
+    // subItems: [
+    //   { name: "CCS", path: "/college-css" },
+    //   { name: "COE", path: "/college-coe" },
+    //   { name: "CBAA", path: "/college-cbaa" },
+    //   { name: "COED", path: "/college-coed" },
+    //   { name: "CHAS", path: "/college-chas" },
+    //   { name: "CAS", path: "/college-cas" },
+    // ],
   },
   {
     name: "Curriculum",
@@ -60,6 +63,16 @@ const navItems: NavItem[] = [
         ],
       },
     ],
+  },
+  {
+    name: "Room Assignment",
+    icon: <HomeIcon />,
+    path: "/room-assignment"
+  },
+  {
+    name: "Generate Schedule",
+    icon: <GenerateIcon />,
+    path: "/generate-schedule"
   },
   {
     name: "Audit Logs",
