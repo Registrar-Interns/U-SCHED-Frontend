@@ -3,31 +3,16 @@ import axios from "axios";
 import PageMeta from "../../../../components/common/PageMeta";
 import PageBreadcrumb from "../../../../components/common/PageBreadCrumb";
 import { UploadIcon } from "../../../../icons";
-import BSCSCurriculumTables from "../../../../components/curriculum/BSCSCurriculumTables";
-import BSCSElectivesTable from "../../../../components/curriculum/BSCSElectivesTable";
+import BSEDECurriculumTables from "../../../../components/curriculum/BSEDECurriculumTables";
+import BSEDEElectivesTable from "../../../../components/curriculum/BSEDEElectivesTable";
 
-interface Course {
-  id: number;
-  department: string;
-  program: string;
-  year: string;
-  semester: string;
-  course_code: string;
-  course_title: string;
-  lec: number;
-  lab: number;
-  total: number;
-  pre_co_requisite: string;
-  is_gened?: number;
-}
-
-const BSCS: React.FC = () => {
+const BSEDE: React.FC = () => {
   const [year, setYear] = useState("First Year");
-  const [courses, setCourses] = useState<Course[]>([]);
+  const [courses, setCourses] = useState([]);
   const [years, setYears] = useState<string[]>([]);
   const [file, setFile] = useState<File | null>(null);
 
-  // Fetch available years from backend
+  // Fetch available years for the dropdown
   useEffect(() => {
     axios
       .get("http://localhost:3001/api/curriculum/years")
@@ -41,25 +26,25 @@ const BSCS: React.FC = () => {
       .get(
         `http://localhost:3001/api/curriculum?year=${encodeURIComponent(
           year
-        )}&program=BSCS`
+        )}&program=BSEDE`
       )
       .then((res) => setCourses(res.data))
       .catch((err) => console.error(err));
   }, [year]);
 
-  // Handle year dropdown change
+  // Handle dropdown change
   const handleYearChange = (e: ChangeEvent<HTMLSelectElement>) => {
     setYear(e.target.value);
   };
 
-  // Handle file input
+  // Handle file input change
   const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
       setFile(e.target.files[0]);
     }
   };
 
-  // Handle upload
+  // Handle file upload
   const handleUpload = () => {
     if (!file) return;
     const formData = new FormData();
@@ -71,12 +56,12 @@ const BSCS: React.FC = () => {
       })
       .then((res) => {
         console.log("Upload successful", res.data);
-        // re-fetch the courses
+        // Re-fetch courses after upload
         axios
           .get(
             `http://localhost:3001/api/curriculum?year=${encodeURIComponent(
               year
-            )}&program=BSCS`
+            )}&program=BSEDE`
           )
           .then((res) => setCourses(res.data))
           .catch((err) => console.error(err));
@@ -87,17 +72,18 @@ const BSCS: React.FC = () => {
   return (
     <>
       <PageMeta
-        title="BSCS Curriculum | iUCSchedProMax+"
-        description="BSCS Curriculum page for iUCSchedProMax+"
+        title="BSEDE Curriculum | iUCSchedProMax+"
+        description="BSEDE Curriculum page for iUCSchedProMax+"
       />
+
       <PageBreadcrumb
-        pageTitle="BSCS"
+        pageTitle="BSEDE"
         segments={[
           { name: "Home", path: "/dashboard" },
-          { name: "Curriculum", path: "/department/ccs/bscs" },
-          { name: "Department", path: "/department/ccs/bscs" },
-          { name: "CCS", path: "/department/ccs/bscs" },
-          { name: "BSCS", path: "/department/ccs/bscs" },
+          { name: "Curriculum", path: "/department/coed/bsede" },
+          { name: "Department", path: "/department/coed/bsede" },
+          { name: "COE", path: "/department/coed/bsede" },
+          { name: "BSEDE", path: "/department/coed/bsede" },
         ]}
       />
 
@@ -152,14 +138,14 @@ const BSCS: React.FC = () => {
         </div>
 
         {/* Conditionally render normal vs. electives table */}
-        {year.toLowerCase() !== "electives" ? (
-          <BSCSCurriculumTables courses={courses} />
+        {year !== "ELECTIVES" ? (
+          <BSEDECurriculumTables courses={courses} />
         ) : (
-          <BSCSElectivesTable courses={courses} />
+          <BSEDEElectivesTable courses={courses} />
         )}
       </div>
     </>
   );
 };
 
-export default BSCS;
+export default BSEDE;

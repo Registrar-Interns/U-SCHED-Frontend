@@ -23,14 +23,14 @@ interface Course {
   is_gened?: number; // 0 or 1
 }
 
-interface BSCPECurriculumTablesProps {
+interface BSACurriculumTablesProps {
   courses: Course[];
 }
 
 // The semesters you want to display
 const semesters = ["First Semester", "Second Semester", "Summer"];
 
-const BSCPECurriculumTables: React.FC<BSCPECurriculumTablesProps> = ({ courses }) => {
+const BSACurriculumTables: React.FC<BSACurriculumTablesProps> = ({ courses }) => {
   // Group courses by semester
   const coursesBySemester = semesters.reduce((acc, sem) => {
     acc[sem] = courses.filter((course) => course.semester === sem);
@@ -53,7 +53,7 @@ const BSCPECurriculumTables: React.FC<BSCPECurriculumTablesProps> = ({ courses }
                     <TableCell
                       colSpan={6}
                       isHeader
-                      className="px-5 py-3 font-medium text-white bg-red-600 dark:bg-red-700 border border-gray-300"
+                      className="px-5 py-3 font-medium text-white bg-yellow-300 dark:bg-yellow-400 border border-gray-300"
                     >
                       {semester}
                     </TableCell>
@@ -156,4 +156,4 @@ const BSCPECurriculumTables: React.FC<BSCPECurriculumTablesProps> = ({ courses }
   );
 };
 
-export default BSCPECurriculumTables;
+export default BSACurriculumTables;

@@ -8,6 +8,7 @@ import {
   AuditIcon,
   HomeIcon,
   GenerateIcon,
+  UserCircleIcon,
 } from "../icons";
 import { useSidebar } from "../context/SidebarContext";
 
@@ -25,6 +26,11 @@ const navItems: NavItem[] = [
     icon: <GridIcon />,
     name: "Dashboard",
     path: "/dashboard",
+  },
+  {
+    icon: <UserCircleIcon />,
+    name: "Users",
+    path: "/users",
   },
   {
     name: "College",
@@ -54,10 +60,41 @@ const navItems: NavItem[] = [
             ],
           },
           {
+            name: "CBAA",
+            subItems: [
+              { name: "BSA", path: "/department/cbaa/bsa" },
+              { name: "BSBA-FF", path: "/department/cbaa/bsba-ff" },
+              { name: "BSBA-FM", path: "/department/cbaa/bsba-fm" },
+            ],
+          },
+          {
             name: "COE",
             subItems: [
               { name: "BSIE", path: "/department/coe/bsie" },
               { name: "BSCPE", path: "/department/coe/bscpe" },
+              { name: "BSECE", path: "/department/coe/bsece" },
+            ],
+          },
+          {
+            name: "COED",
+            subItems: [
+              { name: "BEED", path: "/department/coed/beed" },
+              { name: "BSEDE", path: "/department/coed/bsede" },
+              { name: "BSEDF", path: "/department/coed/bsedf" },
+              { name: "BSEDM", path: "/department/coed/bsedm" },
+              { name: "BSEDS", path: "/department/coed/bseds" },
+            ],
+          },
+          {
+            name: "CAS",
+            subItems: [
+              { name: "BSPSY", path: "/department/cas/bspsy" },
+            ],
+          },
+          {
+            name: "CHAS",
+            subItems: [
+              { name: "BSN", path: "/department/chas/bsn" },
             ],
           },
         ],
