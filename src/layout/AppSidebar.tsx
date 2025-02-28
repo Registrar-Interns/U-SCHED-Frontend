@@ -55,46 +55,46 @@ const navItems: NavItem[] = [
           {
             name: "CCS",
             subItems: [
-              { name: "BSIT", path: "/department/ccs/bsit" },
-              { name: "BSCS", path: "/department/ccs/bscs" },
+              { name: "BSIT", path: "/curriculum/department/ccs/bsit" },
+              { name: "BSCS", path: "/curriculum/department/ccs/bscs" },
             ],
           },
           {
             name: "CBAA",
             subItems: [
-              { name: "BSA", path: "/department/cbaa/bsa" },
-              { name: "BSBA-FF", path: "/department/cbaa/bsba-ff" },
-              { name: "BSBA-FM", path: "/department/cbaa/bsba-fm" },
+              { name: "BSA", path: "/curriculum/department/cbaa/bsa" },
+              { name: "BSBA-MM", path: "/curriculum/department/cbaa/bsba-mm" },
+              { name: "BSBA-FM", path: "/curriculum/department/cbaa/bsba-fm" },
             ],
           },
           {
             name: "COE",
             subItems: [
-              { name: "BSIE", path: "/department/coe/bsie" },
-              { name: "BSCPE", path: "/department/coe/bscpe" },
-              { name: "BSECE", path: "/department/coe/bsece" },
+              { name: "BSIE", path: "/curriculum/department/coe/bsie" },
+              { name: "BSCPE", path: "/curriculum/department/coe/bscpe" },
+              { name: "BSECE", path: "/curriculum/department/coe/bsece" },
             ],
           },
           {
             name: "COED",
             subItems: [
-              { name: "BEED", path: "/department/coed/beed" },
-              { name: "BSEDE", path: "/department/coed/bsede" },
-              { name: "BSEDF", path: "/department/coed/bsedf" },
-              { name: "BSEDM", path: "/department/coed/bsedm" },
-              { name: "BSEDS", path: "/department/coed/bseds" },
+              { name: "BEED", path: "/curriculum/department/coed/beed" },
+              { name: "BSEDE", path: "/curriculum/department/coed/bsede" },
+              { name: "BSEDF", path: "/curriculum/department/coed/bsedf" },
+              { name: "BSEDM", path: "/curriculum/department/coed/bsedm" },
+              { name: "BSEDS", path: "/curriculum/department/coed/bseds" },
             ],
           },
           {
             name: "CAS",
             subItems: [
-              { name: "BSPSY", path: "/department/cas/bspsy" },
+              { name: "BSPSY", path: "/curriculum/department/cas/bspsy" },
             ],
           },
           {
             name: "CHAS",
             subItems: [
-              { name: "BSN", path: "/department/chas/bsn" },
+              { name: "BSN", path: "/curriculum/department/chas/bsn" },
             ],
           },
         ],
@@ -116,16 +116,6 @@ const navItems: NavItem[] = [
     icon: <AuditIcon />,
     path: "/audit-log"
   },
-  // {
-  //   icon: <UserCircleIcon />,
-  //   name: "User Profile",
-  //   path: "/profile",
-  // },
-  // {
-  //   name: "Tables",
-  //   icon: <TableIcon />,
-  //   subItems: [{ name: "Basic Tables", path: "/basic-tables" }],
-  // },
 ];
 
 const AppSidebar: React.FC = () => {
@@ -214,23 +204,23 @@ const AppSidebar: React.FC = () => {
                 className="dark:hidden"
                 src="/images/usched-logo.png"
                 alt="Logo"
-                width={150}
-                height={40}
+                width={238}
+                height={70}
               />
               <img
                 className="hidden dark:block"
                 src="/images/usched-logo.png"
                 alt="Logo"
-                width={150}
-                height={40}
+                width={238}
+                height={70}
               />
             </>
           ) : (
             <img
-              src="/images/usched-logo.png"
+              src="/images/usched-logoo.png"
               alt="Logo"
-              width={32}
-              height={32}
+              width={70}
+              height={70}
             />
           )}
         </Link>

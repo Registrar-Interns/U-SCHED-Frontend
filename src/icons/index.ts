@@ -59,6 +59,7 @@ import { ReactComponent as AuditIcon } from "./audit.svg?react";
 import { ReactComponent as SettingIcon } from "./setting-config.svg?react";
 import { ReactComponent as GenerateIcon } from "./generate.svg?react";
 import { ReactComponent as UploadIcon } from "./upload.svg?react";
+import { ReactComponent as MagnifyingGlassIcon } from "./magnifying-glass.svg?react";
 
 export {
   ErrorHexaIcon,
@@ -122,4 +123,5 @@ export {
   SettingIcon,
   GenerateIcon,
   UploadIcon,
+  MagnifyingGlassIcon,
 };

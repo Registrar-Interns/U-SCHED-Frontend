@@ -37,6 +37,7 @@
     "react-router-dom": "^7.2.0",
     "react-toastify": "^11.0.5",
     "simplebar-react": "^3.3.0",
+    "sweetalert2": "^11.17.2",
     "swiper": "^11.2.3",
     "tailwind-merge": "^3.0.1",
     "uninstall": "^0.0.0"
