@@ -103,15 +103,18 @@ export default function SignInForm() {
                   </Link>
                 </div>
                 <div>
-                  <Button className="w-full bg-green-600 text-white py-2 rounded-3xl hover:bg-green-700 transition" size="sm">
+                  <Button type="submit" className="w-full bg-green-600 text-white py-2 rounded-3xl hover:bg-green-700 transition" size="sm">
                     Sign in
                   </Button>
                 </div>
               </div>
             </form>
-            <p className="text-center text-gray-500 text-2xl mt-5 font-tangerine">
+            <div className="flex justify-center mb-4">
+              <img src="/images/2024-Dangal-ng-Bayan.png" alt="PNC BANNER" />
+            </div>
+            {/* <p className="text-center text-gray-500 text-2xl mt-5 font-tangerine">
               <span className="font-bold">Dangal ng Bayan</span>, Bringing Pride and Honor to the Nation.
-            </p>
+            </p> */}
           </div>
         </div>
       </div>

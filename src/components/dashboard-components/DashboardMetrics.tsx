@@ -21,7 +21,7 @@ export default function DashboardMetrics() {
           <div key={metric.id} className="w-full">
             <div
               className={`flex items-center justify-between p-5 border rounded-2xl cursor-pointer transition-all 
-                ${metric.disabled ? "opacity-50 cursor-not-allowed" : "hover:bg-green-700"} 
+                ${metric.disabled ? " cursor-not-allowed" : "hover:bg-green-700"} 
                 ${selectedMetric === metric.id ? "bg-green-600 text-white" : "bg-white text-gray-800"}`}
               onClick={() => !metric.disabled && setSelectedMetric(metric.id)}
             >
