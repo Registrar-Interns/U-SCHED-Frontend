@@ -16,7 +16,7 @@ interface UserEntry {
   faculty_type: string | null;
   position: string | null;
   role: "Admin" | "User" | null;
-  status: "Active" | "Inactive" | null;
+  status: "ACTIVE" | "INACTIVE" | null;
 }
 
 interface UsersTableProps {
@@ -28,8 +28,8 @@ const safeDisplay = (value: string | null | undefined): string => {
 };
 
 const getBadgeColor = (status: string | null | undefined): "success" | "error" | "light" => {
-  if (status === "Active") return "success";
-  if (status === "Inactive") return "error";
+  if (status === "ACTIVE") return "success";
+  if (status === "INACTIVE") return "error";
   return "light";
 };
 
