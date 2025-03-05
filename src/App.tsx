@@ -10,6 +10,8 @@ import Home from "./pages/Dashboard/Home";
 import Users from "./pages/UsersPage/Users";
 import AuditLog from "./pages/AuditLog/AuditLog";
 import RequireAuth from "./components/auth/RequireAuth";
+import ResetPasswordRequest from "./pages/AuthPages/ResetPasswordRequest";
+import ResetPassword from "./pages/AuthPages/ResetPassword";
 
 // Curriculum Pages
 import CurriculumPage from "./pages/CurriculumPage/CurriculumPage";
@@ -25,6 +27,8 @@ export default function App() {
 
           {/* Auth Route */}
           <Route path="/signin" element={<SignIn />} />
+          <Route path="/reset-password" element={<ResetPasswordRequest />} />
+          <Route path="/reset-password/set" element={<ResetPassword />} />
 
           {/* Dashboard Layout */}
           <Route element={<RequireAuth><AppLayout /></RequireAuth>}>
