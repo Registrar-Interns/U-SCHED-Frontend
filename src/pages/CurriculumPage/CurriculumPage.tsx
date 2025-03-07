@@ -1,4 +1,3 @@
-// src/pages/CurriculumPage/CurriculumPage.tsx
 import React, { useState, useEffect, ChangeEvent } from "react";
 import { useParams } from "react-router-dom";
 import axios from "axios";

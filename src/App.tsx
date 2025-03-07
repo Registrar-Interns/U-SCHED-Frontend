@@ -12,6 +12,7 @@ import AuditLog from "./pages/AuditLog/AuditLog";
 import RequireAuth from "./components/auth/RequireAuth";
 import ResetPasswordRequest from "./pages/AuthPages/ResetPasswordRequest";
 import ResetPassword from "./pages/AuthPages/ResetPassword";
+import CollegePage from "./pages/CollegePage/CollegePage";
 
 // Curriculum Pages
 import CurriculumPage from "./pages/CurriculumPage/CurriculumPage";
@@ -36,6 +37,7 @@ export default function App() {
 
             <Route path="/users" element={<Users />} />
             <Route path="/audit-log" element={<AuditLog />} />
+            <Route path="/colleges" element={<CollegePage />} />
 
             {/* Single route for all dept/program combos */}
             <Route path="/curriculum/department/:dept/:program" element={<CurriculumPage />} />

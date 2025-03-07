@@ -1,4 +1,3 @@
-// src/components/curriculum/CurriculumTables.tsx
 import React from "react";
 import { Table, TableBody, TableCell, TableHeader, TableRow } from "../ui/table";
 
