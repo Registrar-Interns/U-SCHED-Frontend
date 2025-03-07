@@ -14,6 +14,12 @@ import ResetPasswordRequest from "./pages/AuthPages/ResetPasswordRequest";
 import ResetPassword from "./pages/AuthPages/ResetPassword";
 import CollegePage from "./pages/CollegePage/CollegePage";
 
+// import SubAdminDashboard from "./subAdminPages/SubAdminDashboard";
+// import SchedulePage from "./subAdminPages/SchedulePage";
+// import RoomPlottingPage from "./subAdminPages/RoomPlottingPage";
+// import SubAdminCurriculumPage from "./subAdminPages/SubAdminCurriculumPage";
+// import SectionsPage from "./subAdminPages/SectionsPage";
+
 // Curriculum Pages
 import CurriculumPage from "./pages/CurriculumPage/CurriculumPage";
 
@@ -34,13 +40,18 @@ export default function App() {
           {/* Dashboard Layout */}
           <Route element={<RequireAuth><AppLayout /></RequireAuth>}>
             <Route path="/dashboard" element={<Home />} />
-
             <Route path="/users" element={<Users />} />
             <Route path="/audit-log" element={<AuditLog />} />
             <Route path="/colleges" element={<CollegePage />} />
 
             {/* Single route for all dept/program combos */}
             <Route path="/curriculum/department/:dept/:program" element={<CurriculumPage />} />
+
+            {/* Sub-admin routes */}
+            {/* <Route path="/schedule" element={<SchedulePage />} />
+            <Route path="/room-plotting" element={<RoomPlottingPage />} />
+            <Route path="/curriculum" element={<SubAdminCurriculumPage />} />
+            <Route path="/sections" element={<SectionsPage />} /> */}
 
             {/* Other Pages */}
             <Route path="/profile" element={<UserProfiles />} />

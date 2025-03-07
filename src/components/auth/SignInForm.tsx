@@ -29,6 +29,12 @@ export default function SignInForm() {
       if (response.ok) {
         toast.success("Login successful!");
         localStorage.setItem("token", data.token);
+        localStorage.setItem("userType", data.user.user_type);
+        localStorage.setItem("position", data.user.position || "");
+        localStorage.setItem("department", data.user.department || "");
+        localStorage.setItem("fullName", data.user.fullName || "User");
+        localStorage.setItem("role", data.user.role || "USER");
+        localStorage.setItem("email", data.user.email || "user@example.com");
         navigate("/dashboard");
       } else {
         toast.error(data.message || "Login failed!");
@@ -110,11 +116,12 @@ export default function SignInForm() {
               </div>
             </form>
             <div className="flex justify-center mb-4">
-              <img src="/images/2024-Dangal-ng-Bayan.png" alt="PNC BANNER" />
-            </div>
-            {/* <p className="text-center text-gray-500 text-2xl mt-5 font-tangerine">
-              <span className="font-bold">Dangal ng Bayan</span>, Bringing Pride and Honor to the Nation.
-            </p> */}
+            <img
+              src="/images/2024-Dangal-ng-Bayan.png"
+              alt="PNC BANNER"
+              className="h-20 w-auto"
+            />
+          </div>
           </div>
         </div>
       </div>

@@ -8,6 +8,11 @@ export default function UserDropdown() {
   const [isOpen, setIsOpen] = useState(false);
   const navigate = useNavigate();
 
+  // Retrieve user info from localStorage
+  const fullName = localStorage.getItem("fullName") || "User";
+  const role = localStorage.getItem("role") || "User";
+  const email = localStorage.getItem("email") || "user@example.com";
+
   function toggleDropdown() {
     setIsOpen(!isOpen);
   }
@@ -19,11 +24,14 @@ export default function UserDropdown() {
   function handleSignOut() {
     fetch("/api/logout", { method: "POST" })
       .then(() => {
-        // Remove the token from localStorage
+        // Remove the token and user info from localStorage
         localStorage.removeItem("token");
-        // Show a success toast
+        localStorage.removeItem("userType");
+        localStorage.removeItem("position");
+        localStorage.removeItem("fullName");
+        localStorage.removeItem("role");
+        localStorage.removeItem("email");
         toast.success("Sign out successful!");
-        // Navigate back to the signin page
         navigate("/signin");
       })
       .catch(() => {
@@ -41,7 +49,7 @@ export default function UserDropdown() {
           <img src="/images/user/owner.jpg" alt="User" />
         </span> */}
 
-        <span className="block mr-1 font-medium text-theme-sm">Admin</span>
+        <span className="block mr-1 font-medium text-theme-sm">{fullName}</span>
         <svg
           className={`stroke-gray-500 dark:stroke-gray-400 transition-transform duration-200 ${
             isOpen ? "rotate-180" : ""
@@ -68,11 +76,14 @@ export default function UserDropdown() {
         className="absolute right-0 mt-[17px] flex w-[260px] flex-col rounded-2xl border border-gray-200 bg-white p-3 shadow-theme-lg dark:border-gray-800 dark:bg-gray-dark"
       >
         <div>
-          <span className="block font-medium text-gray-700 text-theme-sm dark:text-gray-400">
-            Admin
+        <span className="block font-medium text-gray-700 text-theme-sm dark:text-gray-400">
+            {fullName}
+          </span>
+          <span className="block text-gray-500 text-theme-xs dark:text-gray-400">
+            {role}
           </span>
           <span className="mt-0.5 block text-theme-xs text-gray-500 dark:text-gray-400">
-            admin@gmail.com
+            {email}
           </span>
         </div>
 
