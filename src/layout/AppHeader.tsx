@@ -9,7 +9,7 @@ import UserDropdown from "../components/header/UserDropdown";
 // 1) Department branding map
 const departmentBranding: Record<string, { headerColor: string; collegeName: string; logo: string }> = {
   CCS: {
-    headerColor: "bg-orange-600",
+    headerColor: "bg-orange-500",
     collegeName: "College of Computing Studies",
     logo: "/images/ccs-logo.jpg",
   },
@@ -17,6 +17,26 @@ const departmentBranding: Record<string, { headerColor: string; collegeName: str
     headerColor: "bg-red-600",
     collegeName: "College of Engineering",
     logo: "/images/coe-logo.jpg",
+  },
+  CAS: {
+    headerColor: "bg-red-800",
+    collegeName: "College of Arts and Sciences",
+    logo: "/images/cas-logo.jpg",
+  },
+  CHAS: {
+    headerColor: "bg-green-500",
+    collegeName: "College of Humanities and Social Sciences",
+    logo: "/images/chas-logo.jpg",
+  },
+  COED: {
+    headerColor: "bg-blue-500",
+    collegeName: "College of Education",
+    logo: "/images/coed-logo.jpg",
+  },
+  CBAA: {
+    headerColor: "bg-yellow-500",
+    collegeName: "College of Business and Accountancy",
+    logo: "/images/cbaa-logo.jpg",
   },
   default: {
     headerColor: "bg-green-600",

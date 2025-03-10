@@ -169,7 +169,7 @@ const CurriculumPage: React.FC = () => {
 
         {/* 4) Display the tables. 
             If year is "ELECTIVES", show a distinct grouping. Otherwise normal grouping */}
-        <CurriculumTables year={year} courses={courses} />
+        <CurriculumTables year={year} courses={courses} department={dept?.toUpperCase() || "default"} />
       </div>
 
       {/* 5) Modal for upload overview */}

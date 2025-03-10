@@ -22,7 +22,7 @@ export default function UserDropdown() {
   }
 
   function handleSignOut() {
-    fetch("/api/logout", { method: "POST" })
+    fetch("http://localhost:3001/api/logout", { method: "POST" })
       .then(() => {
         // Remove the token and user info from localStorage
         localStorage.removeItem("token");

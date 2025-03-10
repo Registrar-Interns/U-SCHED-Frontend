@@ -60,6 +60,7 @@ import { ReactComponent as SettingIcon } from "./setting-config.svg?react";
 import { ReactComponent as GenerateIcon } from "./generate.svg?react";
 import { ReactComponent as UploadIcon } from "./upload.svg?react";
 import { ReactComponent as MagnifyingGlassIcon } from "./magnifying-glass.svg?react";
+import { ReactComponent as ConstraintIcon } from "./constraint.svg?react";
 
 export {
   ErrorHexaIcon,
@@ -124,4 +125,5 @@ export {
   GenerateIcon,
   UploadIcon,
   MagnifyingGlassIcon,
+  ConstraintIcon,
 };

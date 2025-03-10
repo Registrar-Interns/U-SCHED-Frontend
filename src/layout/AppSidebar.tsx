@@ -9,6 +9,7 @@ import {
   HomeIcon,
   GenerateIcon,
   UserCircleIcon,
+  ConstraintIcon,
 } from "../icons";
 import { useSidebar } from "../context/SidebarContext";
 
@@ -23,6 +24,26 @@ const departmentBranding: Record<string, { headerColor: string; collegeName: str
     headerColor: "bg-red-600",
     collegeName: "College of Engineering",
     logo: "/images/coe-logo.jpg",
+  },
+  CAS: {
+    headerColor: "bg-red-800",
+    collegeName: "College of Arts and Sciences",
+    logo: "/images/cas-logo.jpg",
+  },
+  CHAS: {
+    headerColor: "bg-green-500",
+    collegeName: "College of Humanities and Social Sciences",
+    logo: "/images/chas-logo.jpg",
+  },
+  COED: {
+    headerColor: "bg-blue-500",
+    collegeName: "College of Education",
+    logo: "/images/coed-logo.jpg",
+  },
+  CBAA: {
+    headerColor: "bg-yellow-500",
+    collegeName: "College of Business and Accountancy",
+    logo: "/images/cbaa-logo.jpg",
   },
   default: {
     headerColor: "bg-green-600",
@@ -118,6 +139,11 @@ const adminNavItems: NavItem[] = [
     path: "/generate-schedule",
   },
   {
+    name: "Constraints",
+    icon: <ConstraintIcon />,
+    path: "/constraints",
+  },
+  {
     name: "Audit Logs",
     icon: <AuditIcon />,
     path: "/audit-log",
@@ -159,7 +185,7 @@ const subAdminNavItems: NavItem[] = [
 ];
 
 const AppSidebar: React.FC = () => {
-  const { isExpanded, isMobileOpen, isHovered } = useSidebar();
+  const { isExpanded, isMobileOpen, isHovered, setIsHovered } = useSidebar();
   const location = useLocation();
   const [openMenus, setOpenMenus] = useState<Record<string, boolean>>({});
 
@@ -257,6 +283,8 @@ const AppSidebar: React.FC = () => {
         ${(isExpanded || isMobileOpen || isHovered) ? "w-[290px]" : "w-[90px]"}
         ${isMobileOpen ? "translate-x-0" : "-translate-x-full"}
         lg:translate-x-0`}
+        onMouseEnter={() => !isExpanded && setIsHovered(true)}
+        onMouseLeave={() => setIsHovered(false)}
     >
       <div className={`py-8 flex ${!isExpanded && !isHovered ? "lg:justify-center" : "justify-start"}`}>
       <Link to="/">

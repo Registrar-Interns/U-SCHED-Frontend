@@ -17,13 +17,17 @@ import CollegePage from "./pages/CollegePage/CollegePage";
 // import SubAdminDashboard from "./subAdminPages/SubAdminDashboard";
 // import SchedulePage from "./subAdminPages/SchedulePage";
 // import RoomPlottingPage from "./subAdminPages/RoomPlottingPage";
-// import SubAdminCurriculumPage from "./subAdminPages/SubAdminCurriculumPage";
+import SubAdminCurriculumPage from "./subAdminPages/SubAdminCurriculumPage";
 // import SectionsPage from "./subAdminPages/SectionsPage";
 
 // Curriculum Pages
 import CurriculumPage from "./pages/CurriculumPage/CurriculumPage";
 
 export default function App() {
+
+  const userType = localStorage.getItem("userType"); // e.g., "ADMIN" or "PROFESSOR"
+  const position = localStorage.getItem("position"); // e.g., "Dean", "Department Chair", etc.
+
   return (
     <>
       <Router>
@@ -44,8 +48,19 @@ export default function App() {
             <Route path="/audit-log" element={<AuditLog />} />
             <Route path="/colleges" element={<CollegePage />} />
 
-            {/* Single route for all dept/program combos */}
-            <Route path="/curriculum/department/:dept/:program" element={<CurriculumPage />} />
+            {/* Single route for all dept/program combos
+            <Route path="/curriculum/department/:dept/:program" element={<CurriculumPage />} /> */}
+
+            {/* Curriculum route for admin users */}
+            <Route
+              path="/curriculum/department/:dept/:program"
+              element={<CurriculumPage />}
+            />
+
+            {/* Curriculum route for sub-admins (Dean/Department Chair) */}
+            {userType === "PROFESSOR" && (position === "Dean" || position === "Department Chair") && (
+              <Route path="/curriculum" element={<SubAdminCurriculumPage />} />
+            )}
 
             {/* Sub-admin routes */}
             {/* <Route path="/schedule" element={<SchedulePage />} />
