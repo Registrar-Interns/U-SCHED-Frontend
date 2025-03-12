@@ -13,6 +13,7 @@ import RequireAuth from "./components/auth/RequireAuth";
 import ResetPasswordRequest from "./pages/AuthPages/ResetPasswordRequest";
 import ResetPassword from "./pages/AuthPages/ResetPassword";
 import CollegePage from "./pages/CollegePage/CollegePage";
+import RoomPage from "./pages/RoomPage/RoomPage";
 
 // import SubAdminDashboard from "./subAdminPages/SubAdminDashboard";
 // import SchedulePage from "./subAdminPages/SchedulePage";
@@ -61,6 +62,9 @@ export default function App() {
             {userType === "PROFESSOR" && (position === "Dean" || position === "Department Chair") && (
               <Route path="/curriculum" element={<SubAdminCurriculumPage />} />
             )}
+
+            {/* Room Assignment */}
+            <Route path="/room-assignment" element={<RoomPage />} />
 
             {/* Sub-admin routes */}
             {/* <Route path="/schedule" element={<SchedulePage />} />

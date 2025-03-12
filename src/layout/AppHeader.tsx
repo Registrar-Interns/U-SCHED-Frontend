@@ -36,7 +36,7 @@ const departmentBranding: Record<string, { headerColor: string; collegeName: str
   CBAA: {
     headerColor: "bg-yellow-500",
     collegeName: "College of Business and Accountancy",
-    logo: "/images/cbaa-logo.jpg",
+    logo: "/images/cbaa-logo.png",
   },
   default: {
     headerColor: "bg-green-600",
