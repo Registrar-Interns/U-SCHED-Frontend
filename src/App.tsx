@@ -20,6 +20,7 @@ import RoomPage from "./pages/RoomPage/RoomPage";
 // import RoomPlottingPage from "./subAdminPages/RoomPlottingPage";
 import SubAdminCurriculumPage from "./subAdminPages/SubAdminCurriculumPage";
 // import SectionsPage from "./subAdminPages/SectionsPage";
+import SubAdminProf from "./subAdminPages/SubAdminProf";
 
 // Curriculum Pages
 import CurriculumPage from "./pages/CurriculumPage/CurriculumPage";
@@ -67,6 +68,7 @@ export default function App() {
             <Route path="/room-assignment" element={<RoomPage />} />
 
             {/* Sub-admin routes */}
+            <Route path="/professors" element={<SubAdminProf />} />
             {/* <Route path="/schedule" element={<SchedulePage />} />
             <Route path="/room-plotting" element={<RoomPlottingPage />} />
             <Route path="/curriculum" element={<SubAdminCurriculumPage />} />
