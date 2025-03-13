@@ -3,8 +3,11 @@ import PageMeta from "../../components/common/PageMeta";
 import PageBreadcrumb from "../../components/common/PageBreadCrumb";
 import UsersTable from "../../components/users/UsersTable";
 import {
+  UserTypeModal,
   CreateAdminModal,
+  CreateDeanChairModal,
   EditAdminModal,
+  EditDeanChairModal,
   CreateProfessorAccountModal,
   EditProfessorModal,
 } from "../../components/users/UserModals";
@@ -26,15 +29,28 @@ export default function Users() {
   const [reloadTable, setReloadTable] = useState(false);
 
   // Modal states
+  const [showUserTypeModal, setShowUserTypeModal] = useState(false);
   const [showCreateAdmin, setShowCreateAdmin] = useState(false);
+  const [showCreateDeanChair, setShowCreateDeanChair] = useState(false);
   const [showEditAdmin, setShowEditAdmin] = useState(false);
+  const [showEditDeanChair, setShowEditDeanChair] = useState(false);
   const [showCreateProfessor, setShowCreateProfessor] = useState(false);
   const [showEditProfessor, setShowEditProfessor] = useState(false);
 
   // Currently selected user (for edit)
   const [selectedUser, setSelectedUser] = useState<UserEntry | null>(null);
 
-  const handleCreateAdminSuccess = () => {
+  const handleUserTypeSelection = (type: "admin" | "deanchair") => {
+    setShowUserTypeModal(false);
+    
+    if (type === "admin") {
+      setShowCreateAdmin(true);
+    } else {
+      setShowCreateDeanChair(true);
+    }
+  };
+
+  const handleCreateSuccess = () => {
     setReloadTable((prev) => !prev);
   };
 
@@ -42,6 +58,11 @@ export default function Users() {
     setSelectedUser(user);
     setShowEditAdmin(true);
   };
+
+  // const handleEditDeanChair = (user: UserEntry) => {
+  //   setSelectedUser(user);
+  //   setShowEditDeanChair(true);
+  // };
 
   const handleCreateProfessorAccount = (user: UserEntry) => {
     setSelectedUser(user);
@@ -72,8 +93,12 @@ export default function Users() {
           {/* Search / Filter inputs */}
         </div>
         <div>
-          <Button variant="primary" size="md" onClick={() => setShowCreateAdmin(true)}>
-            Add Admin
+          <Button 
+            variant="primary" 
+            size="md" 
+            onClick={() => setShowUserTypeModal(true)}
+          >
+            Add User
           </Button>
         </div>
       </div>
@@ -82,22 +107,45 @@ export default function Users() {
         <UsersTable
           reload={reloadTable}
           onEditAdmin={handleEditAdmin}
+          // onEditDeanChair={handleEditDeanChair}
           onCreateProfessorAccount={handleCreateProfessorAccount}
           onEditProfessor={handleEditProfessor}
         />
       </div>
 
+      {/* USER TYPE SELECTION MODAL */}
+      <UserTypeModal
+        isOpen={showUserTypeModal}
+        onClose={() => setShowUserTypeModal(false)}
+        onSelectType={handleUserTypeSelection}
+      />
+
       {/* CREATE ADMIN MODAL */}
       <CreateAdminModal
         isOpen={showCreateAdmin}
         onClose={() => setShowCreateAdmin(false)}
-        onSuccess={handleCreateAdminSuccess}
+        onSuccess={handleCreateSuccess}
+      />
+
+      {/* CREATE DEAN/CHAIR MODAL */}
+      <CreateDeanChairModal
+        isOpen={showCreateDeanChair}
+        onClose={() => setShowCreateDeanChair(false)}
+        onSuccess={handleCreateSuccess}
       />
 
       {/* EDIT ADMIN MODAL */}
       <EditAdminModal
         isOpen={showEditAdmin}
         onClose={() => setShowEditAdmin(false)}
+        user={selectedUser}
+        onSuccess={() => setReloadTable((prev) => !prev)}
+      />
+
+      {/* EDIT DEAN/CHAIR MODAL */}
+      <EditDeanChairModal
+        isOpen={showEditDeanChair}
+        onClose={() => setShowEditDeanChair(false)}
         user={selectedUser}
         onSuccess={() => setReloadTable((prev) => !prev)}
       />

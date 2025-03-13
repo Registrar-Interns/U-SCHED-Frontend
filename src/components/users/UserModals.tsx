@@ -18,6 +18,55 @@ interface UserEntry {
   password?: string | null;
 }
 
+// ========== CREATE USER TYPE SELECTION MODAL ==========
+interface UserTypeModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  onSelectType: (type: "admin" | "deanchair") => void;
+}
+
+export const UserTypeModal: React.FC<UserTypeModalProps> = ({
+  isOpen,
+  onClose,
+  onSelectType,
+}) => {
+  if (!isOpen) return null;
+
+  return (
+    <Modal isOpen={isOpen} onClose={onClose} className="max-w-[500px] m-4">
+      <div className="p-4">
+        <h2 className="text-xl font-semibold mb-8">Select User Type</h2>
+        <div className="space-y-4">
+          <button
+            onClick={() => onSelectType("admin")}
+            className="w-full p-4 text-left border rounded hover:bg-gray-100 transition"
+          >
+            <h3 className="font-medium text-lg">Admin</h3>
+            <p className="text-gray-600">
+              Create a system administrator account with full access to the system.
+            </p>
+          </button>
+
+          <button
+            onClick={() => onSelectType("deanchair")}
+            className="w-full p-4 text-left border rounded hover:bg-gray-100 transition"
+          >
+            <h3 className="font-medium text-lg">Dean / Department Chair</h3>
+            <p className="text-gray-600">
+              Create a faculty account with Dean or Department Chair privileges.
+            </p>
+          </button>
+        </div>
+        {/* <div className="flex justify-end mt-4">
+          <Button variant="outline" onClick={onClose}>
+            Cancel
+          </Button>
+        </div> */}
+      </div>
+    </Modal>
+  );
+};
+
 // ========== CREATE ADMIN MODAL ==========
 interface CreateAdminModalProps {
   isOpen: boolean;
@@ -156,6 +205,633 @@ export const CreateAdminModal: React.FC<CreateAdminModalProps> = ({
           </div>
           <div>
             <Label>Status</Label>
+            <select
+              name="status"
+              value={formData.status}
+              onChange={handleChange}
+              className="mt-1 block w-full border p-2"
+            >
+              <option value="ACTIVE">ACTIVE</option>
+              <option value="INACTIVE">INACTIVE</option>
+            </select>
+          </div>
+        </div>
+        {formError && <div className="text-red-500 mt-2">{formError}</div>}
+        <div className="flex justify-end gap-2 mt-6">
+          <Button variant="outline" onClick={onClose}>
+            Close
+          </Button>
+          <Button onClick={handleSave} disabled={saving}>
+            {saving ? "Saving..." : "Save"}
+          </Button>
+        </div>
+      </div>
+    </Modal>
+  );
+};
+
+// ========== CREATE DEAN/CHAIR MODAL ==========
+interface College {
+  college_id: number;
+  college_name: string;
+  college_code: string;
+}
+
+interface CreateDeanChairModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  onSuccess: () => void;
+}
+
+export const CreateDeanChairModal: React.FC<CreateDeanChairModalProps> = ({
+  isOpen,
+  onClose,
+  onSuccess,
+}) => {
+  const [colleges, setColleges] = useState<College[]>([]);
+  const [formData, setFormData] = useState({
+    firstName: "",
+    middleName: "",
+    lastName: "",
+    extendedName: "",
+    email: "",
+    password: "",
+    collegeId: "",
+    facultyType: "Full-Time", // Default value
+    position: "Dean", // Default to DEAN, can be changed to CHAIR
+    bachelorsDegree: "",
+    mastersDegree: "",
+    doctorateDegree: "",
+    specialization: "",
+    status: "ACTIVE",
+  });
+  const [saving, setSaving] = useState(false);
+  const [formError, setFormError] = useState("");
+
+  useEffect(() => {
+    // Fetch colleges when modal opens
+    if (isOpen) {
+      fetchColleges();
+    }
+  }, [isOpen]);
+
+  const fetchColleges = () => {
+    fetch("http://localhost:3001/api/colleges")
+      .then((res) => res.json())
+      .then((data) => {
+        setColleges(data);
+        if (data.length > 0) {
+          setFormData((prev) => ({ ...prev, collegeId: data[0].college_id.toString() }));
+        }
+      })
+      .catch((error) => {
+        console.error("Error fetching colleges:", error);
+        Swal.fire("Error", "Failed to load colleges.", "error");
+      });
+  };
+
+  if (!isOpen) return null;
+
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
+  ) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const validateForm = (): boolean => {
+    if (
+      !formData.firstName.trim() ||
+      !formData.middleName.trim() ||
+      !formData.lastName.trim() ||
+      !formData.email.trim() ||
+      !formData.password.trim() ||
+      !formData.collegeId ||
+      !formData.facultyType ||
+      !formData.position ||
+      !formData.bachelorsDegree.trim() ||
+      !formData.mastersDegree.trim() ||
+      !formData.doctorateDegree.trim() ||
+      !formData.specialization.trim()
+    ) {
+      setFormError("Please fill all required fields.");
+      return false;
+    }
+    setFormError("");
+    return true;
+  };
+
+  const handleSave = () => {
+    if (!validateForm()) return;
+    setSaving(true);
+
+    // POST /api/users/deanchair to create a new dean/chair
+    fetch("http://localhost:3001/api/users/deanchair", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        first_name: formData.firstName,
+        middle_name: formData.middleName,
+        last_name: formData.lastName,
+        extended_name: formData.extendedName,
+        email: formData.email,
+        password: formData.password,
+        college_id: formData.collegeId,
+        faculty_type: formData.facultyType,
+        position: formData.position,
+        bachelorsDegree: formData.bachelorsDegree,
+        mastersDegree: formData.mastersDegree,
+        doctorateDegree: formData.doctorateDegree,
+        specialization: formData.specialization,
+        status: formData.status,
+      }),
+    })
+      .then((res) => res.json())
+      .then(() => {
+        setTimeout(() => {
+          onSuccess();
+          onClose();
+          setSaving(false);
+          Swal.fire(
+            "Success", 
+            `${formData.position === "Dean" ? "Dean" : "Department Chair"} created successfully.`, 
+            "success"
+          );
+        }, 2000);
+      })
+      .catch((error) => {
+        console.error("Error creating dean/chair:", error);
+        setSaving(false);
+        Swal.fire("Error", "Failed to create account.", "error");
+      });
+  };
+
+  return (
+    <Modal isOpen={isOpen} onClose={onClose} className="max-w-[700px] m-4">
+      <div className="p-4">
+        <h2 className="text-xl font-semibold mb-4">
+          Create Dean/Department Chair Account
+        </h2>
+        <div className="grid grid-cols-2 gap-4">
+          <div>
+            <Label>First Name<span className="text-red-500">*</span></Label>
+            <Input
+              name="firstName"
+              value={formData.firstName}
+              onChange={handleChange}
+            />
+          </div>
+          <div>
+            <Label>Middle Name</Label>
+            <Input
+              name="middleName"
+              value={formData.middleName}
+              onChange={handleChange}
+            />
+          </div>
+          <div>
+            <Label>Last Name<span className="text-red-500">*</span></Label>
+            <Input
+              name="lastName"
+              value={formData.lastName}
+              onChange={handleChange}
+            />
+          </div>
+          <div>
+            <Label>Extended Name</Label>
+            <Input
+              name="extendedName"
+              value={formData.extendedName}
+              onChange={handleChange}
+            />
+          </div>
+          <div>
+            <Label>Email<span className="text-red-500">*</span></Label>
+            <Input
+              type="email"
+              name="email"
+              value={formData.email}
+              onChange={handleChange}
+            />
+          </div>
+          <div>
+            <Label>Password<span className="text-red-500">*</span></Label>
+            <Input
+              type="password"
+              name="password"
+              value={formData.password}
+              onChange={handleChange}
+            />
+          </div>
+          <div>
+            <Label>College/Department<span className="text-red-500">*</span></Label>
+            <select
+              name="collegeId"
+              value={formData.collegeId}
+              onChange={handleChange}
+              className="mt-1 block w-full border p-2"
+            >
+              {colleges.length > 0 ? (
+                colleges.map((college) => (
+                  <option key={college.college_id} value={college.college_id}>
+                    {college.college_name} ({college.college_code})
+                  </option>
+                ))
+              ) : (
+                <option value="">Loading colleges...</option>
+              )}
+            </select>
+          </div>
+          <div>
+            <Label>Faculty Type<span className="text-red-500">*</span></Label>
+            <select
+              name="facultyType"
+              value={formData.facultyType}
+              onChange={handleChange}
+              className="mt-1 block w-full border p-2"
+            >
+              <option value="Full-time">FULL-TIME</option>
+              <option value="Part time">PART TIME</option>
+              <option value="Full-time (COS)">FULL-TIME (COS)</option>
+            </select>
+          </div>
+          <div>
+            <Label>Position<span className="text-red-500">*</span></Label>
+            <select
+              name="position"
+              value={formData.position}
+              onChange={handleChange}
+              className="mt-1 block w-full border p-2"
+            >
+              <option value="Dean">DEAN</option>
+              <option value="Department Chair">DEPARTMENT CHAIR</option>
+            </select>
+          </div>
+          <div>
+            <Label>Bachelor's Degree</Label>
+            <Input
+              name="bachelorsDegree"
+              value={formData.bachelorsDegree}
+              onChange={handleChange}
+            />
+          </div>
+          <div>
+            <Label>Master's Degree</Label>
+            <Input
+              name="mastersDegree"
+              value={formData.mastersDegree}
+              onChange={handleChange}
+            />
+          </div>
+          <div>
+            <Label>Doctorate Degree</Label>
+            <Input
+              name="doctorateDegree"
+              value={formData.doctorateDegree}
+              onChange={handleChange}
+            />
+          </div>
+          <div className="col-span-2">
+            <Label>Specialization<span className="text-red-500">*</span></Label>
+            <textarea
+              name="specialization"
+              value={formData.specialization}
+              onChange={handleChange}
+              placeholder="Enter specializations separated by commas"
+              className="mt-1 block w-full border p-2 h-20"
+            />
+          </div>
+          <div>
+            <Label>Status<span className="text-red-500">*</span></Label>
+            <select
+              name="status"
+              value={formData.status}
+              onChange={handleChange}
+              className="mt-1 block w-full border p-2"
+            >
+              <option value="ACTIVE">ACTIVE</option>
+              <option value="INACTIVE">INACTIVE</option>
+            </select>
+          </div>
+        </div>
+        {formError && <div className="text-red-500 mt-2">{formError}</div>}
+        <div className="flex justify-end gap-2 mt-6">
+          <Button variant="outline" onClick={onClose}>
+            Close
+          </Button>
+          <Button onClick={handleSave} disabled={saving}>
+            {saving ? "Saving..." : "Save"}
+          </Button>
+        </div>
+      </div>
+    </Modal>
+  );
+};
+
+// EditDeanChairModal
+// For editing Dean/Chair accounts with functionality similar to CreateDeanChairModal
+interface College {
+  college_id: number;
+  college_name: string;
+  college_code: string;
+}
+
+interface EditDeanChairModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  onSuccess: () => void;
+  user: UserEntry | null; 
+}
+
+export const EditDeanChairModal: React.FC<EditDeanChairModalProps> = ({
+  isOpen,
+  onClose,
+  onSuccess,
+  user,
+}) => {
+  const [colleges, setColleges] = useState<College[]>([]);
+  const [formData, setFormData] = useState({
+    firstName: "",
+    middleName: "",
+    lastName: "",
+    extendedName: "",
+    email: "",
+    newPassword: "", // For optional password change
+    collegeId: "",
+    facultyType: "",
+    position: "",
+    bachelorsDegree: "",
+    mastersDegree: "",
+    doctorateDegree: "",
+    specialization: "",
+    status: "",
+  });
+  const [saving, setSaving] = useState(false);
+  const [formError, setFormError] = useState("");
+
+  useEffect(() => {
+    // Fetch colleges when modal opens
+    if (isOpen) {
+      fetchColleges();
+    }
+  }, [isOpen]);
+
+  useEffect(() => {
+    // Populate form data when user data is available
+    if (user) {
+      // Fetch the detailed user info from the API
+      fetch(`http://localhost:3001/api/users/professor/${user.user_id}`)
+        .then((res) => res.json())
+        .then((data) => {
+          setFormData({
+            firstName: data.first_name || "",
+            middleName: data.middle_name || "",
+            lastName: data.last_name || "",
+            extendedName: data.extended_name || "",
+            email: data.email || "",
+            newPassword: "", // Empty for security
+            collegeId: data.college_id?.toString() || "",
+            facultyType: data.faculty_type || "",
+            position: data.position || "",
+            bachelorsDegree: data.bachelorsDegree || "",
+            mastersDegree: data.mastersDegree || "",
+            doctorateDegree: data.doctorateDegree || "",
+            specialization: data.specialization || "",
+            status: data.status || "",
+          });
+        })
+        .catch((error) => {
+          console.error("Error fetching dean/chair details:", error);
+          Swal.fire("Error", "Failed to load user details.", "error");
+        });
+    }
+  }, [user]);
+
+  const fetchColleges = () => {
+    fetch("http://localhost:3001/api/colleges")
+      .then((res) => res.json())
+      .then((data) => {
+        setColleges(data);
+      })
+      .catch((error) => {
+        console.error("Error fetching colleges:", error);
+        Swal.fire("Error", "Failed to load colleges.", "error");
+      });
+  };
+
+  if (!isOpen || !user) return null;
+
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
+  ) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const validateForm = (): boolean => {
+    if (
+      !formData.firstName.trim() ||
+      !formData.middleName.trim() ||
+      !formData.lastName.trim() ||
+      !formData.email.trim() ||
+      !formData.collegeId ||
+      !formData.facultyType ||
+      !formData.position ||
+      !formData.bachelorsDegree.trim() ||
+      !formData.mastersDegree.trim() ||
+      !formData.doctorateDegree.trim() ||
+      !formData.specialization.trim()
+    ) {
+      setFormError("Please fill all required fields.");
+      return false;
+    }
+    setFormError("");
+    return true;
+  };
+
+  const handleSave = () => {
+    if (!validateForm()) return;
+    setSaving(true);
+
+    // PUT /api/users/deanchair/:userId to update the dean/chair
+    fetch(`http://localhost:3001/api/users/deanchair/${user.user_id}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        first_name: formData.firstName,
+        middle_name: formData.middleName,
+        last_name: formData.lastName,
+        extended_name: formData.extendedName,
+        email: formData.email,
+        newPassword: formData.newPassword, // Send empty string if no new password
+        college_id: formData.collegeId,
+        faculty_type: formData.facultyType,
+        position: formData.position,
+        bachelorsDegree: formData.bachelorsDegree,
+        mastersDegree: formData.mastersDegree,
+        doctorateDegree: formData.doctorateDegree,
+        specialization: formData.specialization,
+        status: formData.status,
+      }),
+    })
+      .then((res) => res.json())
+      .then(() => {
+        setTimeout(() => {
+          onSuccess();
+          onClose();
+          setSaving(false);
+          Swal.fire(
+            "Success", 
+            `${formData.position === "Dean" ? "Dean" : "Department Chair"} updated successfully.`, 
+            "success"
+          );
+        }, 2000);
+      })
+      .catch((error) => {
+        console.error("Error updating dean/chair:", error);
+        setSaving(false);
+        Swal.fire("Error", "Failed to update account.", "error");
+      });
+  };
+
+  return (
+    <Modal isOpen={isOpen} onClose={onClose} className="max-w-[700px] m-4">
+      <div className="p-4">
+        <h2 className="text-xl font-semibold mb-4">
+          Edit Dean/Department Chair Account
+        </h2>
+        <div className="grid grid-cols-2 gap-4">
+          <div>
+            <Label>First Name<span className="text-red-500">*</span></Label>
+            <Input
+              name="firstName"
+              value={formData.firstName}
+              onChange={handleChange}
+            />
+          </div>
+          <div>
+            <Label>Middle Name</Label>
+            <Input
+              name="middleName"
+              value={formData.middleName}
+              onChange={handleChange}
+            />
+          </div>
+          <div>
+            <Label>Last Name<span className="text-red-500">*</span></Label>
+            <Input
+              name="lastName"
+              value={formData.lastName}
+              onChange={handleChange}
+            />
+          </div>
+          <div>
+            <Label>Extended Name</Label>
+            <Input
+              name="extendedName"
+              value={formData.extendedName}
+              onChange={handleChange}
+            />
+          </div>
+          <div>
+            <Label>Email<span className="text-red-500">*</span></Label>
+            <Input
+              type="email"
+              name="email"
+              value={formData.email}
+              onChange={handleChange}
+            />
+          </div>
+          <div>
+            <Label>New Password (leave blank to keep current)</Label>
+            <Input
+              type="password"
+              name="newPassword"
+              value={formData.newPassword}
+              onChange={handleChange}
+              placeholder="Enter only to change password"
+            />
+          </div>
+          <div>
+            <Label>College/Department<span className="text-red-500">*</span></Label>
+            <select
+              name="collegeId"
+              value={formData.collegeId}
+              onChange={handleChange}
+              className="mt-1 block w-full border p-2"
+            >
+              {colleges.length > 0 ? (
+                colleges.map((college) => (
+                  <option key={college.college_id} value={college.college_id}>
+                    {college.college_name} ({college.college_code})
+                  </option>
+                ))
+              ) : (
+                <option value="">Loading colleges...</option>
+              )}
+            </select>
+          </div>
+          <div>
+            <Label>Faculty Type<span className="text-red-500">*</span></Label>
+            <select
+              name="facultyType"
+              value={formData.facultyType}
+              onChange={handleChange}
+              className="mt-1 block w-full border p-2"
+            >
+              <option value="Full-time">FULL-TIME</option>
+              <option value="Part time">PART TIME</option>
+              <option value="Full-time (COS)">FULL-TIME (COS)</option>
+            </select>
+          </div>
+          <div>
+            <Label>Position<span className="text-red-500">*</span></Label>
+            <select
+              name="position"
+              value={formData.position}
+              onChange={handleChange}
+              className="mt-1 block w-full border p-2"
+            >
+              <option value="Dean">DEAN</option>
+              <option value="Department Chair">DEPARTMENT CHAIR</option>
+            </select>
+          </div>
+          <div>
+            <Label>Bachelor's Degree</Label>
+            <Input
+              name="bachelorsDegree"
+              value={formData.bachelorsDegree}
+              onChange={handleChange}
+            />
+          </div>
+          <div>
+            <Label>Master's Degree</Label>
+            <Input
+              name="mastersDegree"
+              value={formData.mastersDegree}
+              onChange={handleChange}
+            />
+          </div>
+          <div>
+            <Label>Doctorate Degree</Label>
+            <Input
+              name="doctorateDegree"
+              value={formData.doctorateDegree}
+              onChange={handleChange}
+            />
+          </div>
+          <div className="col-span-2">
+            <Label>Specialization<span className="text-red-500">*</span></Label>
+            <textarea
+              name="specialization"
+              value={formData.specialization}
+              onChange={handleChange}
+              placeholder="Enter specializations separated by commas"
+              className="mt-1 block w-full border p-2 h-20"
+            />
+          </div>
+          <div>
+            <Label>Status<span className="text-red-500">*</span></Label>
             <select
               name="status"
               value={formData.status}
