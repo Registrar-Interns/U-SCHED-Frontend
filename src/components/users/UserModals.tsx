@@ -33,35 +33,33 @@ export const UserTypeModal: React.FC<UserTypeModalProps> = ({
   if (!isOpen) return null;
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} className="max-w-[500px] m-4">
-      <div className="p-4">
-        <h2 className="text-xl font-semibold mb-8">Select User Type</h2>
-        <div className="space-y-4">
-          <button
-            onClick={() => onSelectType("admin")}
-            className="w-full p-4 text-left border rounded hover:bg-gray-100 transition"
-          >
-            <h3 className="font-medium text-lg">Admin</h3>
-            <p className="text-gray-600">
-              Create a system administrator account with full access to the system.
-            </p>
-          </button>
+    <Modal
+      isOpen={isOpen}
+      onClose={onClose}
+      className="max-w-[500px] m-4"
+      headerText="Select User Type"
+      headerImage="/images/pnc-bg.jpg" // Use your background image
+    >
+      <div className="space-y-4">
+        <button
+          onClick={() => onSelectType("admin")}
+          className="w-full p-4 text-left border rounded hover:bg-gray-100 transition"
+        >
+          <h3 className="font-medium text-lg">Admin</h3>
+          <p className="text-gray-600">
+            Create a system administrator account with full access to the system.
+          </p>
+        </button>
 
-          <button
-            onClick={() => onSelectType("deanchair")}
-            className="w-full p-4 text-left border rounded hover:bg-gray-100 transition"
-          >
-            <h3 className="font-medium text-lg">Dean / Department Chair</h3>
-            <p className="text-gray-600">
-              Create a faculty account with Dean or Department Chair privileges.
-            </p>
-          </button>
-        </div>
-        {/* <div className="flex justify-end mt-4">
-          <Button variant="outline" onClick={onClose}>
-            Cancel
-          </Button>
-        </div> */}
+        <button
+          onClick={() => onSelectType("deanchair")}
+          className="w-full p-4 text-left border rounded hover:bg-gray-100 transition"
+        >
+          <h3 className="font-medium text-lg">Dean / Department Chair</h3>
+          <p className="text-gray-600">
+            Create a faculty account with Dean or Department Chair privileges.
+          </p>
+        </button>
       </div>
     </Modal>
   );
@@ -149,9 +147,9 @@ export const CreateAdminModal: React.FC<CreateAdminModalProps> = ({
   };
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} className="max-w-[700px] m-4">
+    <Modal isOpen={isOpen} onClose={onClose} className="max-w-[700px] m-4" headerText="Create Admin Account" headerImage="/images/pnc-bg.jpg">
       <div className="p-4">
-        <h2 className="text-xl font-semibold mb-4">Create Admin Account</h2>
+        {/* <h2 className="text-xl font-semibold mb-4">Create Admin Account</h2> */}
         <div className="grid grid-cols-2 gap-4">
           <div>
             <Label>First Name</Label>
@@ -367,11 +365,11 @@ export const CreateDeanChairModal: React.FC<CreateDeanChairModalProps> = ({
   };
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} className="max-w-[700px] m-4">
+    <Modal isOpen={isOpen} onClose={onClose} className="max-w-[700px] m-4" headerText="Create Dean/Department Chair Account" headerImage="/images/pnc-bg.jpg">
       <div className="p-4">
-        <h2 className="text-xl font-semibold mb-4">
+        {/* <h2 className="text-xl font-semibold mb-4">
           Create Dean/Department Chair Account
-        </h2>
+        </h2> */}
         <div className="grid grid-cols-2 gap-4">
           <div>
             <Label>First Name<span className="text-red-500">*</span></Label>
@@ -577,10 +575,10 @@ export const EditDeanChairModal: React.FC<EditDeanChairModalProps> = ({
   }, [isOpen]);
 
   useEffect(() => {
-    // Populate form data when user data is available
-    if (user) {
+    // Only fetch dean/chair details if modal is open AND user exists AND user is a dean/chair
+    if (isOpen && user && (user.position === "Dean" || user.position === "Department Chair")) {
       // Fetch the detailed user info from the API
-      fetch(`http://localhost:3001/api/users/professor/${user.user_id}`)
+      fetch(`http://localhost:3001/api/users/deanchair/${user.user_id}`)
         .then((res) => res.json())
         .then((data) => {
           setFormData({
@@ -588,7 +586,7 @@ export const EditDeanChairModal: React.FC<EditDeanChairModalProps> = ({
             middleName: data.middle_name || "",
             lastName: data.last_name || "",
             extendedName: data.extended_name || "",
-            email: data.email || "",
+            email: user.email || "", // Use the email from the user object
             newPassword: "", // Empty for security
             collegeId: data.college_id?.toString() || "",
             facultyType: data.faculty_type || "",
@@ -605,7 +603,7 @@ export const EditDeanChairModal: React.FC<EditDeanChairModalProps> = ({
           Swal.fire("Error", "Failed to load user details.", "error");
         });
     }
-  }, [user]);
+  }, [user, isOpen]);
 
   const fetchColleges = () => {
     fetch("http://localhost:3001/api/colleges")
@@ -695,11 +693,11 @@ export const EditDeanChairModal: React.FC<EditDeanChairModalProps> = ({
   };
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} className="max-w-[700px] m-4">
+    <Modal isOpen={isOpen} onClose={onClose} className="max-w-[700px] m-4" headerText="Edit Dean/Department Chair Account" headerImage="/images/pnc-bg.jpg">
       <div className="p-4">
-        <h2 className="text-xl font-semibold mb-4">
+        {/* <h2 className="text-xl font-semibold mb-4">
           Edit Dean/Department Chair Account
-        </h2>
+        </h2> */}
         <div className="grid grid-cols-2 gap-4">
           <div>
             <Label>First Name<span className="text-red-500">*</span></Label>
@@ -965,11 +963,11 @@ export const EditAdminModal: React.FC<EditAdminModalProps> = ({
   
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} className="max-w-[700px] m-4">
+    <Modal isOpen={isOpen} onClose={onClose} className="max-w-[700px] m-4" headerText={`Edit Admin - ${user.full_name}`} headerImage="/images/pnc-bg.jpg">
       <div className="p-4">
-        <h2 className="text-xl font-semibold mb-4">
+        {/* <h2 className="text-xl font-semibold mb-4">
           Edit Admin - {user.full_name}
-        </h2>
+        </h2> */}
         <div className="grid grid-cols-2 gap-4">
           <div>
             <Label>First Name</Label>
@@ -1107,11 +1105,11 @@ export const CreateProfessorAccountModal: React.FC<CreateProfessorAccountModalPr
   const noOfSpecialization = specializations.length;
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} className="max-w-[700px] m-4">
+    <Modal isOpen={isOpen} onClose={onClose} className="max-w-[700px] m-4" headerText={`Create Account for - ${user.full_name}`} headerImage="/images/pnc-bg.jpg">
       <div className="p-4">
-        <h2 className="text-xl font-semibold mb-4">
+        {/* <h2 className="text-xl font-semibold mb-4">
           Create Account for {user.full_name}
-        </h2>
+        </h2> */}
         <div className="grid grid-cols-2 gap-4">
           <div>
             <Label>Department</Label>
@@ -1258,11 +1256,11 @@ export const EditProfessorModal: React.FC<EditProfessorModalProps> = ({
   };
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} className="max-w-[700px] m-4">
+    <Modal isOpen={isOpen} onClose={onClose} className="max-w-[700px] m-4" headerText={`Edit Professor - ${user.full_name}`} headerImage="/images/pnc-bg.jpg">
       <div className="p-4">
-        <h2 className="text-xl font-semibold mb-4">
+        {/* <h2 className="text-xl font-semibold mb-4">
           Edit Professor - {user.full_name}
-        </h2>
+        </h2> */}
         <div className="grid grid-cols-2 gap-4">
           <div>
             <Label>Department</Label>

@@ -11,7 +11,6 @@ import {
   CreateProfessorAccountModal,
   EditProfessorModal,
 } from "../../components/users/UserModals";
-import Button from "../../components/ui/button/Button";
 
 interface UserEntry {
   user_id: number;
@@ -59,10 +58,10 @@ export default function Users() {
     setShowEditAdmin(true);
   };
 
-  // const handleEditDeanChair = (user: UserEntry) => {
-  //   setSelectedUser(user);
-  //   setShowEditDeanChair(true);
-  // };
+  const handleEditDeanChair = (user: UserEntry) => {
+    setSelectedUser(user);
+    setShowEditDeanChair(true);
+  };
 
   const handleCreateProfessorAccount = (user: UserEntry) => {
     setSelectedUser(user);
@@ -93,13 +92,12 @@ export default function Users() {
           {/* Search / Filter inputs */}
         </div>
         <div>
-          <Button 
-            variant="primary" 
-            size="md" 
-            onClick={() => setShowUserTypeModal(true)}
-          >
-            Add User
-          </Button>
+          <button 
+          className="px-5 py-2.5 text-white bg-green-600 rounded-md hover:bg-green-700"
+          onClick={() => setShowUserTypeModal(true)}
+        >
+          Add User
+        </button>
         </div>
       </div>
 
@@ -107,7 +105,7 @@ export default function Users() {
         <UsersTable
           reload={reloadTable}
           onEditAdmin={handleEditAdmin}
-          // onEditDeanChair={handleEditDeanChair}
+          onEditDeanChair={handleEditDeanChair}
           onCreateProfessorAccount={handleCreateProfessorAccount}
           onEditProfessor={handleEditProfessor}
         />
