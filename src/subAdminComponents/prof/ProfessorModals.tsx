@@ -1,6 +1,6 @@
 import React, { useState, useEffect, ChangeEvent, FormEvent } from "react";
 import axios from "axios";
-import { Modal } from "../components/ui/modal";
+import { Modal } from "../../components/ui/modal";
 import Select, { MultiValue } from "react-select";
 
 // TimeAvailability is used in both modal components

@@ -1484,14 +1484,7 @@ export const EditProfessorModal: React.FC<EditProfessorModalProps> = ({
     specialization: "",
     status: "INACTIVE",
     password: "",
-    // Time availability fields
-    mondayAvailability: "",
-    tuesdayAvailability: "",
-    wednesdayAvailability: "",
-    thursdayAvailability: "",
-    fridayAvailability: "",
-    saturdayAvailability: "",
-    sundayAvailability: "",
+    // Time availability fields removed
   });
   const [saving, setSaving] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -1508,9 +1501,7 @@ export const EditProfessorModal: React.FC<EditProfessorModalProps> = ({
           return res.json();
         })
         .then((data) => {
-          // Extract time availability data if it exists
-          const timeAvailability = data.time_availability || {};
-          
+          // Set professor data - exclude time availability fields
           setFormData({
             department: data.department || user.department || "",
             faculty_type: data.faculty_type || user.faculty_type || "",
@@ -1523,14 +1514,6 @@ export const EditProfessorModal: React.FC<EditProfessorModalProps> = ({
             specialization: data.specialization || "",
             status: user.status || "INACTIVE",
             password: "", // blank until changed
-            // Set time availability fields
-            mondayAvailability: timeAvailability.monday || "",
-            tuesdayAvailability: timeAvailability.tuesday || "",
-            wednesdayAvailability: timeAvailability.wednesday || "",
-            thursdayAvailability: timeAvailability.thursday || "",
-            fridayAvailability: timeAvailability.friday || "",
-            saturdayAvailability: timeAvailability.saturday || "",
-            sundayAvailability: timeAvailability.sunday || "",
           });
           setLoading(false);
         })
@@ -1545,14 +1528,6 @@ export const EditProfessorModal: React.FC<EditProfessorModalProps> = ({
             specialization: "Not available",
             status: user.status || "INACTIVE",
             password: "", // blank until changed
-            // Default time availability
-            mondayAvailability: "",
-            tuesdayAvailability: "",
-            wednesdayAvailability: "",
-            thursdayAvailability: "",
-            fridayAvailability: "",
-            saturdayAvailability: "",
-            sundayAvailability: "",
           });
           setLoading(false);
         });
@@ -1579,17 +1554,6 @@ export const EditProfessorModal: React.FC<EditProfessorModalProps> = ({
     if (!validateForm()) return;
     setSaving(true);
     
-    // Prepare time availability data
-    const timeAvailability = {
-      monday: formData.mondayAvailability,
-      tuesday: formData.tuesdayAvailability,
-      wednesday: formData.wednesdayAvailability,
-      thursday: formData.thursdayAvailability,
-      friday: formData.fridayAvailability,
-      saturday: formData.saturdayAvailability,
-      sunday: formData.sundayAvailability,
-    };
-    
     try {
       // PUT /api/users/professor/:userId to update professor details
       const response = await fetch(
@@ -1605,7 +1569,7 @@ export const EditProfessorModal: React.FC<EditProfessorModalProps> = ({
             specialization: formData.specialization,
             status: formData.status,
             newPassword: formData.password, // if provided, update password
-            time_availability: timeAvailability,
+            // time_availability removed from request body
           }),
         }
       );
@@ -1691,82 +1655,7 @@ export const EditProfessorModal: React.FC<EditProfessorModalProps> = ({
               </div>
             </div>
             
-            {/* Time Availability Section */}
-            <div className="mt-6">
-              <h3 className="text-lg font-medium mb-3">Time Availability</h3>
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <Label>Monday</Label>
-                  <Input
-                    type="text"
-                    name="mondayAvailability"
-                    value={formData.mondayAvailability}
-                    onChange={handleChange}
-                    placeholder="e.g. 08:00-17:00"
-                  />
-                </div>
-                <div>
-                  <Label>Tuesday</Label>
-                  <Input
-                    type="text"
-                    name="tuesdayAvailability"
-                    value={formData.tuesdayAvailability}
-                    onChange={handleChange}
-                    placeholder="e.g. 08:00-17:00"
-                  />
-                </div>
-                <div>
-                  <Label>Wednesday</Label>
-                  <Input
-                    type="text"
-                    name="wednesdayAvailability"
-                    value={formData.wednesdayAvailability}
-                    onChange={handleChange}
-                    placeholder="e.g. 08:00-17:00"
-                  />
-                </div>
-                <div>
-                  <Label>Thursday</Label>
-                  <Input
-                    type="text"
-                    name="thursdayAvailability"
-                    value={formData.thursdayAvailability}
-                    onChange={handleChange}
-                    placeholder="e.g. 08:00-17:00"
-                  />
-                </div>
-                <div>
-                  <Label>Friday</Label>
-                  <Input
-                    type="text"
-                    name="fridayAvailability"
-                    value={formData.fridayAvailability}
-                    onChange={handleChange}
-                    placeholder="e.g. 08:00-17:00"
-                  />
-                </div>
-                <div>
-                  <Label>Saturday</Label>
-                  <Input
-                    type="text"
-                    name="saturdayAvailability"
-                    value={formData.saturdayAvailability}
-                    onChange={handleChange}
-                    placeholder="e.g. 08:00-12:00 (leave blank if not available)"
-                  />
-                </div>
-                <div>
-                  <Label>Sunday</Label>
-                  <Input
-                    type="text"
-                    name="sundayAvailability"
-                    value={formData.sundayAvailability}
-                    onChange={handleChange}
-                    placeholder="e.g. 08:00-12:00 (leave blank if not available)"
-                  />
-                </div>
-              </div>
-            </div>
+            {/* Time Availability Section removed */}
             
             {/* Optional password change */}
             <div className="mt-6">

@@ -1,6 +1,6 @@
 import React from "react";
 //import { useNavigate } from "react-router-dom";
-import ProfessorTable from "../subAdminComponents/ProfessorTable";
+import ProfessorTable from "../subAdminComponents/prof/ProfessorTable";
 
 const SubAdminProf: React.FC = () => {
   return (
