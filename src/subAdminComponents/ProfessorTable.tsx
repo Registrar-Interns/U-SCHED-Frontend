@@ -1,7 +1,16 @@
 import React, { useEffect, useState, ChangeEvent } from "react";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
-import AddProfessor from "../subAdminComponents/AddProfessor";
+import { AddProfessorModal, EditProfessorModal } from "./ProfessorModals";
+
+interface TimeAvailability {
+  monday: string;
+  tuesday: string;
+  wednesday: string;
+  thursday: string;
+  friday: string;
+  saturday: string;
+  sunday: string;
+}
 
 interface Professor {
   professor_id: number;
@@ -9,7 +18,7 @@ interface Professor {
   department: string;
   faculty_type: string;
   position: string;
-  time_availability?: string;
+  time_availability: TimeAvailability;
   bachelorsDegree: string;
   mastersDegree: string;
   doctorateDegree: string;
@@ -25,8 +34,9 @@ const ProfessorTable: React.FC = () => {
   const rowsPerPage = 5;
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [showModal, setShowModal] = useState(false);
-  const navigate = useNavigate();
+  const [showAddModal, setShowAddModal] = useState(false);
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [selectedProfessorId, setSelectedProfessorId] = useState<number | null>(null);
 
   const fetchProfessors = async () => {
     try {
@@ -70,6 +80,32 @@ const ProfessorTable: React.FC = () => {
     setFilter({ ...filter, [e.target.name]: e.target.value });
   };
 
+  const handleEditProfessor = (professorId: number) => {
+    setSelectedProfessorId(professorId);
+    setShowEditModal(true);
+  };
+
+  // Format time availability for display
+  const formatTimeAvailability = (timeAvailability: TimeAvailability) => {
+    const days = [
+      { day: 'Monday', value: timeAvailability.monday },
+      { day: 'Tuesday', value: timeAvailability.tuesday },
+      { day: 'Wednesday', value: timeAvailability.wednesday },
+      { day: 'Thursday', value: timeAvailability.thursday },
+      { day: 'Friday', value: timeAvailability.friday },
+      { day: 'Saturday', value: timeAvailability.saturday },
+      { day: 'Sunday', value: timeAvailability.sunday }
+    ];
+    
+    const availableDays = days.filter(d => d.value && d.value.trim() !== '');
+    
+    if (availableDays.length === 0) {
+      return "Not specified";
+    }
+    
+    return availableDays.map(d => `${d.day}: ${d.value}`).join(', ');
+  };
+
   const indexOfLastRow = currentPage * rowsPerPage;
   const indexOfFirstRow = indexOfLastRow - rowsPerPage;
   const currentRows = filteredProfessors.slice(indexOfFirstRow, indexOfLastRow);
@@ -80,7 +116,7 @@ const ProfessorTable: React.FC = () => {
         <h2 className="text-lg font-bold">Professors List</h2>
         <button
           className="bg-red-700 text-white px-4 py-2 rounded hover:bg-red-800"
-          onClick={() => setShowModal(true)}
+          onClick={() => setShowAddModal(true)}
         >
           Add New Professor
         </button>
@@ -145,7 +181,7 @@ const ProfessorTable: React.FC = () => {
                 <td className="p-2 border">{prof.department}</td>
                 <td className="p-2 border">{prof.faculty_type}</td>
                 <td className="p-2 border">{prof.position}</td>
-                <td className="p-2 border">{prof.time_availability || "N/A"}</td>
+                <td className="p-2 border">{formatTimeAvailability(prof.time_availability)}</td>
                 <td className="p-2 border">{prof.bachelorsDegree || "N/A"}</td>
                 <td className="p-2 border">{prof.mastersDegree || "N/A"}</td>
                 <td className="p-2 border">{prof.doctorateDegree || "N/A"}</td>
@@ -153,7 +189,7 @@ const ProfessorTable: React.FC = () => {
                 <td className="p-2 border">{prof.status}</td>
                 <td className="p-2 border">
                   <button
-                    onClick={() => navigate(`/edit-professor/${prof.professor_id}`)}
+                    onClick={() => handleEditProfessor(prof.professor_id)}
                     className="px-3 py-1 bg-orange-700 text-white rounded hover:bg-red-800"
                   >
                     EDIT
@@ -165,26 +201,49 @@ const ProfessorTable: React.FC = () => {
         </table>
       )}
 
-      {/* Modal for Adding a New Professor */}
-      {showModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
-          <div className="bg-white p-6 rounded shadow-md w-2/3 relative">
-            <h2 className="text-xl font-bold mb-4">Add New Professor</h2>
-            <button
-              className="absolute top-4 right-4 bg-gray-300 rounded-full px-2 py-1"
-              onClick={() => setShowModal(false)}
-            >
-              ✖
-            </button>
-            <AddProfessor
-              onProfessorAdded={() => {
-                setShowModal(false);
-                fetchProfessors(); // ✅ Ensure table updates after adding new professor
-              }}
-            />
-          </div>
+      {/* Pagination */}
+      {!loading && !error && filteredProfessors.length > rowsPerPage && (
+        <div className="flex justify-center mt-4">
+          <button
+            onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+            disabled={currentPage === 1}
+            className="px-3 py-1 bg-gray-200 rounded mr-2 disabled:opacity-50"
+          >
+            Previous
+          </button>
+          <span className="px-3 py-1">
+            Page {currentPage} of {Math.ceil(filteredProfessors.length / rowsPerPage)}
+          </span>
+          <button
+            onClick={() => setCurrentPage(prev => Math.min(prev + 1, Math.ceil(filteredProfessors.length / rowsPerPage)))}
+            disabled={currentPage === Math.ceil(filteredProfessors.length / rowsPerPage)}
+            className="px-3 py-1 bg-gray-200 rounded ml-2 disabled:opacity-50"
+          >
+            Next
+          </button>
         </div>
       )}
+
+      {/* Modal for Adding a New Professor */}
+      <AddProfessorModal
+        isOpen={showAddModal}
+        onClose={() => setShowAddModal(false)}
+        onSuccess={() => {
+          fetchProfessors();
+          setShowAddModal(false);
+        }}
+      />
+
+      {/* Modal for Editing a Professor */}
+      <EditProfessorModal
+        isOpen={showEditModal}
+        onClose={() => setShowEditModal(false)}
+        onSuccess={() => {
+          fetchProfessors();
+          setShowEditModal(false);
+        }}
+        professorId={selectedProfessorId}
+      />
     </div>
   );
 };

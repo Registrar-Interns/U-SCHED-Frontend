@@ -262,6 +262,14 @@ export const CreateDeanChairModal: React.FC<CreateDeanChairModalProps> = ({
     doctorateDegree: "",
     specialization: "",
     status: "ACTIVE",
+    // Time availability fields
+    mondayAvailability: "",
+    tuesdayAvailability: "",
+    wednesdayAvailability: "",
+    thursdayAvailability: "",
+    fridayAvailability: "",
+    saturdayAvailability: "",
+    sundayAvailability: "",
   });
   const [saving, setSaving] = useState(false);
   const [formError, setFormError] = useState("");
@@ -323,6 +331,17 @@ export const CreateDeanChairModal: React.FC<CreateDeanChairModalProps> = ({
     if (!validateForm()) return;
     setSaving(true);
 
+    // Prepare time availability data
+    const timeAvailability = {
+      monday: formData.mondayAvailability,
+      tuesday: formData.tuesdayAvailability,
+      wednesday: formData.wednesdayAvailability,
+      thursday: formData.thursdayAvailability,
+      friday: formData.fridayAvailability,
+      saturday: formData.saturdayAvailability,
+      sunday: formData.sundayAvailability,
+    };
+
     // POST /api/users/deanchair to create a new dean/chair
     fetch("http://localhost:3001/api/users/deanchair", {
       method: "POST",
@@ -342,6 +361,7 @@ export const CreateDeanChairModal: React.FC<CreateDeanChairModalProps> = ({
         doctorateDegree: formData.doctorateDegree,
         specialization: formData.specialization,
         status: formData.status,
+        time_availability: timeAvailability,
       }),
     })
       .then((res) => res.json())
@@ -512,6 +532,84 @@ export const CreateDeanChairModal: React.FC<CreateDeanChairModalProps> = ({
             </select>
           </div>
         </div>
+
+        {/* Time Availability Section */}
+        <div className="mt-6">
+          <h3 className="text-lg font-medium mb-3">Time Availability</h3>
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <Label>Monday</Label>
+              <Input
+                type="text"
+                name="mondayAvailability"
+                value={formData.mondayAvailability}
+                onChange={handleChange}
+                placeholder="e.g. 08:00-17:00"
+              />
+            </div>
+            <div>
+              <Label>Tuesday</Label>
+              <Input
+                type="text"
+                name="tuesdayAvailability"
+                value={formData.tuesdayAvailability}
+                onChange={handleChange}
+                placeholder="e.g. 08:00-17:00"
+              />
+            </div>
+            <div>
+              <Label>Wednesday</Label>
+              <Input
+                type="text"
+                name="wednesdayAvailability"
+                value={formData.wednesdayAvailability}
+                onChange={handleChange}
+                placeholder="e.g. 08:00-17:00"
+              />
+            </div>
+            <div>
+              <Label>Thursday</Label>
+              <Input
+                type="text"
+                name="thursdayAvailability"
+                value={formData.thursdayAvailability}
+                onChange={handleChange}
+                placeholder="e.g. 08:00-17:00"
+              />
+            </div>
+            <div>
+              <Label>Friday</Label>
+              <Input
+                type="text"
+                name="fridayAvailability"
+                value={formData.fridayAvailability}
+                onChange={handleChange}
+                placeholder="e.g. 08:00-17:00"
+              />
+            </div>
+            <div>
+              <Label>Saturday</Label>
+              <Input
+                type="text"
+                name="saturdayAvailability"
+                value={formData.saturdayAvailability}
+                onChange={handleChange}
+                placeholder="e.g. 08:00-12:00 (leave blank if not available)"
+              />
+            </div>
+            <div>
+              <Label>Sunday</Label>
+              <Input
+                type="text"
+                name="sundayAvailability"
+                value={formData.sundayAvailability}
+                onChange={handleChange}
+                placeholder="e.g. 08:00-12:00 (leave blank if not available)"
+              />
+            </div>
+          </div>
+        </div>
+
         {formError && <div className="text-red-500 mt-2">{formError}</div>}
         <div className="flex justify-end gap-2 mt-6">
           <Button variant="outline" onClick={onClose}>
@@ -563,6 +661,14 @@ export const EditDeanChairModal: React.FC<EditDeanChairModalProps> = ({
     doctorateDegree: "",
     specialization: "",
     status: "",
+    // Time availability fields
+    mondayAvailability: "",
+    tuesdayAvailability: "",
+    wednesdayAvailability: "",
+    thursdayAvailability: "",
+    fridayAvailability: "",
+    saturdayAvailability: "",
+    sundayAvailability: "",
   });
   const [saving, setSaving] = useState(false);
   const [formError, setFormError] = useState("");
@@ -581,6 +687,9 @@ export const EditDeanChairModal: React.FC<EditDeanChairModalProps> = ({
       fetch(`http://localhost:3001/api/users/deanchair/${user.user_id}`)
         .then((res) => res.json())
         .then((data) => {
+          // Extract time availability data if it exists
+          const timeAvailability = data.time_availability || {};
+          
           setFormData({
             firstName: data.first_name || "",
             middleName: data.middle_name || "",
@@ -596,6 +705,14 @@ export const EditDeanChairModal: React.FC<EditDeanChairModalProps> = ({
             doctorateDegree: data.doctorateDegree || "",
             specialization: data.specialization || "",
             status: data.status || "",
+            // Set time availability fields
+            mondayAvailability: timeAvailability.monday || "",
+            tuesdayAvailability: timeAvailability.tuesday || "",
+            wednesdayAvailability: timeAvailability.wednesday || "",
+            thursdayAvailability: timeAvailability.thursday || "",
+            fridayAvailability: timeAvailability.friday || "",
+            saturdayAvailability: timeAvailability.saturday || "",
+            sundayAvailability: timeAvailability.sunday || "",
           });
         })
         .catch((error) => {
@@ -651,6 +768,17 @@ export const EditDeanChairModal: React.FC<EditDeanChairModalProps> = ({
     if (!validateForm()) return;
     setSaving(true);
 
+    // Prepare time availability data
+    const timeAvailability = {
+      monday: formData.mondayAvailability,
+      tuesday: formData.tuesdayAvailability,
+      wednesday: formData.wednesdayAvailability,
+      thursday: formData.thursdayAvailability,
+      friday: formData.fridayAvailability,
+      saturday: formData.saturdayAvailability,
+      sunday: formData.sundayAvailability,
+    };
+
     // PUT /api/users/deanchair/:userId to update the dean/chair
     fetch(`http://localhost:3001/api/users/deanchair/${user.user_id}`, {
       method: "PUT",
@@ -670,6 +798,7 @@ export const EditDeanChairModal: React.FC<EditDeanChairModalProps> = ({
         doctorateDegree: formData.doctorateDegree,
         specialization: formData.specialization,
         status: formData.status,
+        time_availability: timeAvailability,
       }),
     })
       .then((res) => res.json())
@@ -841,6 +970,84 @@ export const EditDeanChairModal: React.FC<EditDeanChairModalProps> = ({
             </select>
           </div>
         </div>
+
+        {/* Time Availability Section */}
+        <div className="mt-6">
+          <h3 className="text-lg font-medium mb-3">Time Availability</h3>
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <Label>Monday</Label>
+              <Input
+                type="text"
+                name="mondayAvailability"
+                value={formData.mondayAvailability}
+                onChange={handleChange}
+                placeholder="e.g. 08:00-17:00"
+              />
+            </div>
+            <div>
+              <Label>Tuesday</Label>
+              <Input
+                type="text"
+                name="tuesdayAvailability"
+                value={formData.tuesdayAvailability}
+                onChange={handleChange}
+                placeholder="e.g. 08:00-17:00"
+              />
+            </div>
+            <div>
+              <Label>Wednesday</Label>
+              <Input
+                type="text"
+                name="wednesdayAvailability"
+                value={formData.wednesdayAvailability}
+                onChange={handleChange}
+                placeholder="e.g. 08:00-17:00"
+              />
+            </div>
+            <div>
+              <Label>Thursday</Label>
+              <Input
+                type="text"
+                name="thursdayAvailability"
+                value={formData.thursdayAvailability}
+                onChange={handleChange}
+                placeholder="e.g. 08:00-17:00"
+              />
+            </div>
+            <div>
+              <Label>Friday</Label>
+              <Input
+                type="text"
+                name="fridayAvailability"
+                value={formData.fridayAvailability}
+                onChange={handleChange}
+                placeholder="e.g. 08:00-17:00"
+              />
+            </div>
+            <div>
+              <Label>Saturday</Label>
+              <Input
+                type="text"
+                name="saturdayAvailability"
+                value={formData.saturdayAvailability}
+                onChange={handleChange}
+                placeholder="e.g. 08:00-12:00 (leave blank if not available)"
+              />
+            </div>
+            <div>
+              <Label>Sunday</Label>
+              <Input
+                type="text"
+                name="sundayAvailability"
+                value={formData.sundayAvailability}
+                onChange={handleChange}
+                placeholder="e.g. 08:00-12:00 (leave blank if not available)"
+              />
+            </div>
+          </div>
+        </div>
+
         {formError && <div className="text-red-500 mt-2">{formError}</div>}
         <div className="flex justify-end gap-2 mt-6">
           <Button variant="outline" onClick={onClose}>
@@ -1042,27 +1249,81 @@ export const CreateProfessorAccountModal: React.FC<CreateProfessorAccountModalPr
 }) => {
   const [password, setPassword] = useState("");
   const [sendingEmail, setSendingEmail] = useState(false);
+  const [loading, setLoading] = useState(false);
 
-  // Suppose we fetch professor details to display read-only fields (department, etc.)
+  // State for professor details
   const [professorData, setProfessorData] = useState({
-    department: "N/A",
-    faculty_type: "N/A",
-    position: "N/A",
-    degrees: "B.Sc, M.Sc, Ph.D",
-    specialization: "N/A",
+    department: "",
+    faculty_type: "",
+    position: "",
+    degrees: "",
+    specialization: "",
+    time_availability: {
+      monday: "",
+      tuesday: "",
+      wednesday: "",
+      thursday: "",
+      friday: "",
+      saturday: "",
+      sunday: "",
+    }
   });
 
   useEffect(() => {
     if (user && isOpen) {
-      // Example only: your union query doesn't return degrees or specialization
-      // so you'd fetch them from /api/professor/:id if needed
-      setProfessorData({
-        department: user.department || "",
-        faculty_type: user.faculty_type || "",
-        position: user.position || "",
-        degrees: "B.Sc, M.Sc, Ph.D",
-        specialization: "Algebra,Trigonometry",
-      });
+      setLoading(true);
+      // Fetch professor details from the API
+      fetch(`http://localhost:3001/api/users/professor/${user.user_id}`)
+        .then((res) => {
+          if (!res.ok) {
+            throw new Error("Failed to fetch professor details");
+          }
+          return res.json();
+        })
+        .then((data) => {
+          setProfessorData({
+            department: data.department || user.department || "",
+            faculty_type: data.faculty_type || user.faculty_type || "",
+            position: data.position || user.position || "",
+            degrees: [
+              data.bachelorsDegree || "",
+              data.mastersDegree || "",
+              data.doctorateDegree || ""
+            ].filter(Boolean).join(", "),
+            specialization: data.specialization || "",
+            time_availability: data.time_availability || {
+              monday: "",
+              tuesday: "",
+              wednesday: "",
+              thursday: "",
+              friday: "",
+              saturday: "",
+              sunday: "",
+            }
+          });
+          setLoading(false);
+        })
+        .catch((error) => {
+          console.error("Error fetching professor details:", error);
+          // Fallback to user data from the users table
+          setProfessorData({
+            department: user.department || "",
+            faculty_type: user.faculty_type || "",
+            position: user.position || "",
+            degrees: "Not available",
+            specialization: "Not available",
+            time_availability: {
+              monday: "",
+              tuesday: "",
+              wednesday: "",
+              thursday: "",
+              friday: "",
+              saturday: "",
+              sunday: "",
+            }
+          });
+          setLoading(false);
+        });
     }
   }, [user, isOpen]);
 
@@ -1100,62 +1361,100 @@ export const CreateProfessorAccountModal: React.FC<CreateProfessorAccountModalPr
     }
   };
 
-  // Example: count specializations
-  const specializations = professorData.specialization.split(",");
+  // Calculate number of specializations
+  const specializations = professorData.specialization ? professorData.specialization.split(",") : [];
   const noOfSpecialization = specializations.length;
 
   return (
     <Modal isOpen={isOpen} onClose={onClose} className="max-w-[700px] m-4" headerText={`Create Account for - ${user.full_name}`} headerImage="/images/pnc-bg.jpg">
       <div className="p-4">
-        {/* <h2 className="text-xl font-semibold mb-4">
-          Create Account for {user.full_name}
-        </h2> */}
-        <div className="grid grid-cols-2 gap-4">
-          <div>
-            <Label>Department</Label>
-            <Input type="text" value={professorData.department} disabled />
-          </div>
-          <div>
-            <Label>Faculty Type</Label>
-            <Input type="text" value={professorData.faculty_type} disabled />
-          </div>
-          <div>
-            <Label>Position</Label>
-            <Input type="text" value={professorData.position} disabled />
-          </div>
-          <div>
-            <Label>Degrees</Label>
-            <Input type="text" value={professorData.degrees} disabled />
-          </div>
-          <div>
-            <Label>Specializations</Label>
-            <Input type="text" value={professorData.specialization} disabled />
-          </div>
-          <div>
-            <Label>No. of Specialization</Label>
-            <Input type="text" value={noOfSpecialization.toString()} disabled />
-          </div>
-        </div>
+        {loading ? (
+          <div className="text-center py-4">Loading professor details...</div>
+        ) : (
+          <>
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <Label>Department</Label>
+                <Input type="text" value={professorData.department} disabled />
+              </div>
+              <div>
+                <Label>Faculty Type</Label>
+                <Input type="text" value={professorData.faculty_type} disabled />
+              </div>
+              <div>
+                <Label>Position</Label>
+                <Input type="text" value={professorData.position} disabled />
+              </div>
+              <div>
+                <Label>Degrees</Label>
+                <Input type="text" value={professorData.degrees} disabled />
+              </div>
+              <div>
+                <Label>Specializations</Label>
+                <Input type="text" value={professorData.specialization} disabled />
+              </div>
+              <div>
+                <Label>No. of Specialization</Label>
+                <Input type="text" value={noOfSpecialization.toString()} disabled />
+              </div>
+            </div>
 
-        {/* Password Field */}
-        <div className="mt-4">
-          <Label>Password</Label>
-          <Input
-            type="text"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            disabled={sendingEmail}
-          />
-        </div>
+            {/* Time Availability Section */}
+            <div className="mt-6">
+              <h3 className="text-lg font-medium mb-3">Time Availability</h3>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <Label>Monday</Label>
+                  <Input type="text" value={professorData.time_availability.monday} disabled />
+                </div>
+                <div>
+                  <Label>Tuesday</Label>
+                  <Input type="text" value={professorData.time_availability.tuesday} disabled />
+                </div>
+                <div>
+                  <Label>Wednesday</Label>
+                  <Input type="text" value={professorData.time_availability.wednesday} disabled />
+                </div>
+                <div>
+                  <Label>Thursday</Label>
+                  <Input type="text" value={professorData.time_availability.thursday} disabled />
+                </div>
+                <div>
+                  <Label>Friday</Label>
+                  <Input type="text" value={professorData.time_availability.friday} disabled />
+                </div>
+                <div>
+                  <Label>Saturday</Label>
+                  <Input type="text" value={professorData.time_availability.saturday} disabled />
+                </div>
+                <div>
+                  <Label>Sunday</Label>
+                  <Input type="text" value={professorData.time_availability.sunday} disabled />
+                </div>
+              </div>
+            </div>
 
-        <div className="flex justify-end gap-2 mt-6">
-          <Button variant="outline" onClick={onClose}>
-            Close
-          </Button>
-          <Button onClick={handleSendPassword} disabled={sendingEmail}>
-            {sendingEmail ? "Sending..." : "Send Password via Email"}
-          </Button>
-        </div>
+            {/* Password Field */}
+            <div className="mt-6">
+              <Label>Password</Label>
+              <Input
+                type="text"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                disabled={sendingEmail}
+              />
+            </div>
+
+            <div className="flex justify-end gap-2 mt-6">
+              <Button variant="outline" onClick={onClose}>
+                Close
+              </Button>
+              <Button onClick={handleSendPassword} disabled={sendingEmail}>
+                {sendingEmail ? "Sending..." : "Send Password via Email"}
+              </Button>
+            </div>
+          </>
+        )}
       </div>
     </Modal>
   );
@@ -1185,21 +1484,78 @@ export const EditProfessorModal: React.FC<EditProfessorModalProps> = ({
     specialization: "",
     status: "INACTIVE",
     password: "",
+    // Time availability fields
+    mondayAvailability: "",
+    tuesdayAvailability: "",
+    wednesdayAvailability: "",
+    thursdayAvailability: "",
+    fridayAvailability: "",
+    saturdayAvailability: "",
+    sundayAvailability: "",
   });
   const [saving, setSaving] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     if (user && isOpen) {
-      // Ideally, fetch detailed professor data here. For now, use union data.
-      setFormData({
-        department: user.department || "",
-        faculty_type: user.faculty_type || "",
-        position: user.position || "",
-        degrees: "B.Sc, M.Sc, Ph.D",
-        specialization: "Algebra,Trigonometry",
-        status: user.status || "INACTIVE",
-        password: "", // blank until changed
-      });
+      setLoading(true);
+      // Fetch detailed professor data from the API
+      fetch(`http://localhost:3001/api/users/professor/${user.user_id}`)
+        .then((res) => {
+          if (!res.ok) {
+            throw new Error("Failed to fetch professor details");
+          }
+          return res.json();
+        })
+        .then((data) => {
+          // Extract time availability data if it exists
+          const timeAvailability = data.time_availability || {};
+          
+          setFormData({
+            department: data.department || user.department || "",
+            faculty_type: data.faculty_type || user.faculty_type || "",
+            position: data.position || user.position || "",
+            degrees: [
+              data.bachelorsDegree || "",
+              data.mastersDegree || "",
+              data.doctorateDegree || ""
+            ].filter(Boolean).join(", "),
+            specialization: data.specialization || "",
+            status: user.status || "INACTIVE",
+            password: "", // blank until changed
+            // Set time availability fields
+            mondayAvailability: timeAvailability.monday || "",
+            tuesdayAvailability: timeAvailability.tuesday || "",
+            wednesdayAvailability: timeAvailability.wednesday || "",
+            thursdayAvailability: timeAvailability.thursday || "",
+            fridayAvailability: timeAvailability.friday || "",
+            saturdayAvailability: timeAvailability.saturday || "",
+            sundayAvailability: timeAvailability.sunday || "",
+          });
+          setLoading(false);
+        })
+        .catch((error) => {
+          console.error("Error fetching professor details:", error);
+          // Fallback to user data from the users table
+          setFormData({
+            department: user.department || "",
+            faculty_type: user.faculty_type || "",
+            position: user.position || "",
+            degrees: "Not available",
+            specialization: "Not available",
+            status: user.status || "INACTIVE",
+            password: "", // blank until changed
+            // Default time availability
+            mondayAvailability: "",
+            tuesdayAvailability: "",
+            wednesdayAvailability: "",
+            thursdayAvailability: "",
+            fridayAvailability: "",
+            saturdayAvailability: "",
+            sundayAvailability: "",
+          });
+          setLoading(false);
+        });
     }
   }, [user, isOpen]);
 
@@ -1222,6 +1578,18 @@ export const EditProfessorModal: React.FC<EditProfessorModalProps> = ({
   const handleSave = async () => {
     if (!validateForm()) return;
     setSaving(true);
+    
+    // Prepare time availability data
+    const timeAvailability = {
+      monday: formData.mondayAvailability,
+      tuesday: formData.tuesdayAvailability,
+      wednesday: formData.wednesdayAvailability,
+      thursday: formData.thursdayAvailability,
+      friday: formData.fridayAvailability,
+      saturday: formData.saturdayAvailability,
+      sunday: formData.sundayAvailability,
+    };
+    
     try {
       // PUT /api/users/professor/:userId to update professor details
       const response = await fetch(
@@ -1237,6 +1605,7 @@ export const EditProfessorModal: React.FC<EditProfessorModalProps> = ({
             specialization: formData.specialization,
             status: formData.status,
             newPassword: formData.password, // if provided, update password
+            time_availability: timeAvailability,
           }),
         }
       );
@@ -1258,87 +1627,168 @@ export const EditProfessorModal: React.FC<EditProfessorModalProps> = ({
   return (
     <Modal isOpen={isOpen} onClose={onClose} className="max-w-[700px] m-4" headerText={`Edit Professor - ${user.full_name}`} headerImage="/images/pnc-bg.jpg">
       <div className="p-4">
-        {/* <h2 className="text-xl font-semibold mb-4">
-          Edit Professor - {user.full_name}
-        </h2> */}
-        <div className="grid grid-cols-2 gap-4">
-          <div>
-            <Label>Department</Label>
-            <Input
-              type="text"
-              name="department"
-              value={formData.department}
-              disabled
-            />
-          </div>
-          <div>
-            <Label>Faculty Type</Label>
-            <Input
-              type="text"
-              name="faculty_type"
-              value={formData.faculty_type}
-              disabled
-            />
-          </div>
-          <div>
-            <Label>Position</Label>
-            <Input
-              type="text"
-              name="position"
-              value={formData.position}
-              disabled
-            />
-          </div>
-          <div>
-            <Label>Degrees</Label>
-            <Input
-              type="text"
-              name="degrees"
-              value={formData.degrees}
-              disabled
-            />
-          </div>
-          <div>
-            <Label>Specializations</Label>
-            <Input
-              type="text"
-              name="specialization"
-              value={formData.specialization}
-              disabled
-            />
-          </div>
-          <div>
-            <Label>Status</Label>
-            <select
-              name="status"
-              value={formData.status}
-              onChange={handleChange}
-              className="mt-1 block w-full border p-2"
-            >
-              <option value="ACTIVE">ACTIVE</option>
-              <option value="INACTIVE">INACTIVE</option>
-            </select>
-          </div>
-        </div>
-        {/* Optional password change */}
-        <div className="mt-4">
-          <Label>New Password (optional)</Label>
-          <Input
-            type="password"
-            name="password"
-            value={formData.password}
-            onChange={handleChange}
-            placeholder="Leave blank to keep existing"
-          />
-        </div>
-        <div className="flex justify-end gap-2 mt-6">
-          <Button variant="outline" onClick={onClose}>
-            Close
-          </Button>
-          <Button onClick={handleSave} disabled={saving}>
-            {saving ? "Saving..." : "Save"}
-          </Button>
-        </div>
+        {loading ? (
+          <div className="text-center py-4">Loading professor details...</div>
+        ) : (
+          <>
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <Label>Department</Label>
+                <Input
+                  type="text"
+                  name="department"
+                  value={formData.department}
+                  disabled
+                />
+              </div>
+              <div>
+                <Label>Faculty Type</Label>
+                <Input
+                  type="text"
+                  name="faculty_type"
+                  value={formData.faculty_type}
+                  disabled
+                />
+              </div>
+              <div>
+                <Label>Position</Label>
+                <Input
+                  type="text"
+                  name="position"
+                  value={formData.position}
+                  disabled
+                />
+              </div>
+              <div>
+                <Label>Degrees</Label>
+                <Input
+                  type="text"
+                  name="degrees"
+                  value={formData.degrees}
+                  disabled
+                />
+              </div>
+              <div>
+                <Label>Specializations</Label>
+                <Input
+                  type="text"
+                  name="specialization"
+                  value={formData.specialization}
+                  disabled
+                />
+              </div>
+              <div>
+                <Label>Status</Label>
+                <select
+                  name="status"
+                  value={formData.status}
+                  onChange={handleChange}
+                  className="mt-1 block w-full border p-2"
+                >
+                  <option value="ACTIVE">ACTIVE</option>
+                  <option value="INACTIVE">INACTIVE</option>
+                </select>
+              </div>
+            </div>
+            
+            {/* Time Availability Section */}
+            <div className="mt-6">
+              <h3 className="text-lg font-medium mb-3">Time Availability</h3>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <Label>Monday</Label>
+                  <Input
+                    type="text"
+                    name="mondayAvailability"
+                    value={formData.mondayAvailability}
+                    onChange={handleChange}
+                    placeholder="e.g. 08:00-17:00"
+                  />
+                </div>
+                <div>
+                  <Label>Tuesday</Label>
+                  <Input
+                    type="text"
+                    name="tuesdayAvailability"
+                    value={formData.tuesdayAvailability}
+                    onChange={handleChange}
+                    placeholder="e.g. 08:00-17:00"
+                  />
+                </div>
+                <div>
+                  <Label>Wednesday</Label>
+                  <Input
+                    type="text"
+                    name="wednesdayAvailability"
+                    value={formData.wednesdayAvailability}
+                    onChange={handleChange}
+                    placeholder="e.g. 08:00-17:00"
+                  />
+                </div>
+                <div>
+                  <Label>Thursday</Label>
+                  <Input
+                    type="text"
+                    name="thursdayAvailability"
+                    value={formData.thursdayAvailability}
+                    onChange={handleChange}
+                    placeholder="e.g. 08:00-17:00"
+                  />
+                </div>
+                <div>
+                  <Label>Friday</Label>
+                  <Input
+                    type="text"
+                    name="fridayAvailability"
+                    value={formData.fridayAvailability}
+                    onChange={handleChange}
+                    placeholder="e.g. 08:00-17:00"
+                  />
+                </div>
+                <div>
+                  <Label>Saturday</Label>
+                  <Input
+                    type="text"
+                    name="saturdayAvailability"
+                    value={formData.saturdayAvailability}
+                    onChange={handleChange}
+                    placeholder="e.g. 08:00-12:00 (leave blank if not available)"
+                  />
+                </div>
+                <div>
+                  <Label>Sunday</Label>
+                  <Input
+                    type="text"
+                    name="sundayAvailability"
+                    value={formData.sundayAvailability}
+                    onChange={handleChange}
+                    placeholder="e.g. 08:00-12:00 (leave blank if not available)"
+                  />
+                </div>
+              </div>
+            </div>
+            
+            {/* Optional password change */}
+            <div className="mt-6">
+              <Label>New Password (optional)</Label>
+              <Input
+                type="password"
+                name="password"
+                value={formData.password}
+                onChange={handleChange}
+                placeholder="Leave blank to keep existing"
+              />
+            </div>
+            <div className="flex justify-end gap-2 mt-6">
+              <Button variant="outline" onClick={onClose}>
+                Close
+              </Button>
+              <Button onClick={handleSave} disabled={saving}>
+                {saving ? "Saving..." : "Save"}
+              </Button>
+            </div>
+          </>
+        )}
       </div>
     </Modal>
   );
