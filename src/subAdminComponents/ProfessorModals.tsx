@@ -37,7 +37,7 @@ interface ProfessorData {
   middle_name: string;
   last_name: string;
   extended_name: string;
-  college_id: string;
+  college_id: string | number;
   faculty_type: string;
   position: string;
   time_availability: TimeAvailability;
@@ -47,6 +47,7 @@ interface ProfessorData {
   specialization: string[];
   email: string;
   status: string;
+  department?: string;
 }
 
 export const AddProfessorModal: React.FC<AddProfessorModalProps> = ({
@@ -56,20 +57,27 @@ export const AddProfessorModal: React.FC<AddProfessorModalProps> = ({
 }) => {
   const [specializations, setSpecializations] = useState<SpecializationOption[]>([]);
   const [selectedSpecializations, setSelectedSpecializations] = useState<SpecializationOption[]>([]);
-  const [colleges, setColleges] = useState<{ college_id: number; college_name: string }[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
   
-  // Retrieve department from localStorage
+  // Retrieve department and college from localStorage
   const userDepartment = localStorage.getItem("department") || "";
+  const userCollege = localStorage.getItem("college_id") || "";
+
+  // For testing purposes, use a known valid college ID from your database
+  const validCollegeId = 5; // Use a college ID that exists in your database
+  
+  // Parse college ID from localStorage
+  const parsedCollegeId = parseInt(userCollege);
+  const collegeId = isNaN(parsedCollegeId) ? validCollegeId : parsedCollegeId;
 
   const [professor, setProfessor] = useState<ProfessorData>({
     first_name: "",
     middle_name: "",
     last_name: "",
     extended_name: "",
-    college_id: "",
+    college_id: collegeId, // Use the valid college ID
     faculty_type: "Full-time",
     position: "Professor",
     time_availability: {
@@ -87,21 +95,23 @@ export const AddProfessorModal: React.FC<AddProfessorModalProps> = ({
     specialization: [] as string[],
     email: "",
     status: "ACTIVE",
+    department: userDepartment,
   });
 
-  // Fetch colleges and specializations
+  // Fetch specializations
   useEffect(() => {
     if (isOpen) {
       const fetchData = async () => {
         try {
           setLoading(true);
           
-          // Fetch colleges
-          const collegesResponse = await axios.get("http://localhost:3001/api/colleges");
-          setColleges(collegesResponse.data);
-          
-          if (collegesResponse.data.length > 0) {
-            setProfessor(prev => ({ ...prev, college_id: collegesResponse.data[0].college_id.toString() }));
+          // Debug: Fetch college information
+          try {
+            const collegeResponse = await axios.get(`http://localhost:3001/api/professors/colleges/all`);
+            console.log("Available colleges for adding:", collegeResponse.data);
+            console.log("Current userCollege from localStorage:", userCollege);
+          } catch (err) {
+            console.error("Error fetching college information:", err);
           }
           
           // Fetch specializations
@@ -168,12 +178,43 @@ export const AddProfessorModal: React.FC<AddProfessorModalProps> = ({
     
     try {
       setSaving(true);
-      await axios.post("http://localhost:3001/api/professors", professor);
+      
+      // Debug: Log the college ID from localStorage
+      console.log("College ID from localStorage:", userCollege);
+      console.log("Parsed College ID:", parsedCollegeId);
+      console.log("Is collegeId NaN?", isNaN(parsedCollegeId));
+      console.log("Using college ID:", collegeId);
+      
+      // Ensure college_id is set correctly before submitting
+      const professorData = {
+        ...professor,
+        college_id: collegeId // Use the valid college ID defined earlier
+      };
+      
+      // Debug log
+      console.log("Submitting professor data:", professorData);
+      console.log("College ID being sent:", professorData.college_id, "Type:", typeof professorData.college_id);
+      
+      // Log each required field to check if any are missing
+      console.log("Required fields check:");
+      console.log("- first_name:", professorData.first_name, Boolean(professorData.first_name));
+      console.log("- last_name:", professorData.last_name, Boolean(professorData.last_name));
+      console.log("- college_id:", professorData.college_id, Boolean(professorData.college_id));
+      console.log("- faculty_type:", professorData.faculty_type, Boolean(professorData.faculty_type));
+      console.log("- position:", professorData.position, Boolean(professorData.position));
+      console.log("- status:", professorData.status, Boolean(professorData.status));
+      
+      await axios.post("http://localhost:3001/api/professors", professorData);
       onSuccess();
       onClose();
     } catch (err) {
       console.error("Error adding professor:", err);
-      setError("Failed to add professor. Please try again.");
+      if (axios.isAxiosError(err) && err.response) {
+        console.error("Server response:", err.response.data);
+        setError(`Failed to add professor: ${err.response.data.details || err.response.data.error || "Unknown error"}`);
+      } else {
+        setError("Failed to add professor. Please try again.");
+      }
     } finally {
       setSaving(false);
     }
@@ -216,18 +257,22 @@ export const AddProfessorModal: React.FC<AddProfessorModalProps> = ({
             </div>
           </div>
 
-          {/* College, Faculty Type & Position */}
+          {/* Department Information (Read-only) */}
+          <div>
+            <label className="block text-sm">Department</label>
+            <input 
+              type="text" 
+              value={userDepartment} 
+              className="w-full p-2 border rounded bg-gray-100" 
+              disabled 
+            />
+            <p className="text-xs text-gray-500 mt-1">
+              New professors will be added to your department
+            </p>
+          </div>
+
+          {/* Faculty Type & Position */}
           <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm">College *</label>
-              <select name="college_id" value={professor.college_id} onChange={handleChange} className="w-full p-2 border rounded">
-                {colleges.map(college => (
-                  <option key={college.college_id} value={college.college_id}>
-                    {college.college_name}
-                  </option>
-                ))}
-              </select>
-            </div>
             <div>
               <label className="block text-sm">Faculty Type *</label>
               <select name="faculty_type" value={professor.faculty_type} onChange={handleChange} className="w-full p-2 border rounded">
@@ -235,16 +280,15 @@ export const AddProfessorModal: React.FC<AddProfessorModalProps> = ({
                 <option value="Part-time">Part-time</option>
               </select>
             </div>
-          </div>
-
-          <div>
-            <label className="block text-sm">Position *</label>
-            <select name="position" value={professor.position} onChange={handleChange} className="w-full p-2 border rounded">
-              <option value="Professor">Professor</option>
-              <option value="Assistant Professor">Assistant Professor</option>
-              <option value="Associate Professor">Associate Professor</option>
-              <option value="Lecturer">Lecturer</option>
-            </select>
+            <div>
+              <label className="block text-sm">Position *</label>
+              <select name="position" value={professor.position} onChange={handleChange} className="w-full p-2 border rounded">
+                <option value="Professor">Professor</option>
+                <option value="Assistant Professor">Assistant Professor</option>
+                <option value="Associate Professor">Associate Professor</option>
+                <option value="Lecturer">Lecturer</option>
+              </select>
+            </div>
           </div>
 
           {/* Time Availability */}
@@ -403,20 +447,27 @@ export const EditProfessorModal: React.FC<EditProfessorModalProps> = ({
 }) => {
   const [specializations, setSpecializations] = useState<SpecializationOption[]>([]);
   const [selectedSpecializations, setSelectedSpecializations] = useState<SpecializationOption[]>([]);
-  const [colleges, setColleges] = useState<{ college_id: number; college_name: string }[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
   
-  // Retrieve department from localStorage
+  // Retrieve department and college from localStorage
   const userDepartment = localStorage.getItem("department") || "";
+  const userCollege = localStorage.getItem("college_id") || "";
+
+  // For testing purposes, use a known valid college ID from your database
+  const validCollegeId = 5; // Use a college ID that exists in your database
+  
+  // Parse college ID from localStorage
+  const parsedCollegeId = parseInt(userCollege);
+  const defaultCollegeId = isNaN(parsedCollegeId) ? validCollegeId : parsedCollegeId;
 
   const [professor, setProfessor] = useState<ProfessorData>({
     first_name: "",
     middle_name: "",
     last_name: "",
     extended_name: "",
-    college_id: "",
+    college_id: defaultCollegeId, // Use the valid college ID
     faculty_type: "Full-time",
     position: "Professor",
     time_availability: {
@@ -434,9 +485,10 @@ export const EditProfessorModal: React.FC<EditProfessorModalProps> = ({
     specialization: [] as string[],
     email: "",
     status: "ACTIVE",
+    department: userDepartment,
   });
 
-  // Fetch professor data, colleges, and specializations
+  // Fetch professor data and specializations
   useEffect(() => {
     if (isOpen && professorId) {
       const fetchData = async () => {
@@ -447,9 +499,14 @@ export const EditProfessorModal: React.FC<EditProfessorModalProps> = ({
           const professorResponse = await axios.get(`http://localhost:3001/api/professors/${professorId}`);
           const professorData = professorResponse.data;
           
-          // Fetch colleges
-          const collegesResponse = await axios.get("http://localhost:3001/api/colleges");
-          setColleges(collegesResponse.data);
+          // Debug: Fetch college information
+          try {
+            const collegeResponse = await axios.get(`http://localhost:3001/api/professors/colleges/all`);
+            console.log("Available colleges:", collegeResponse.data);
+            console.log("Current professor college_id:", professorData.college_id);
+          } catch (err) {
+            console.error("Error fetching college information:", err);
+          }
           
           // Fetch specializations
           if (userDepartment) {
@@ -464,13 +521,13 @@ export const EditProfessorModal: React.FC<EditProfessorModalProps> = ({
             specializationArray = professorData.specialization;
           }
           
-          // Set professor data
+          // Set professor data - preserve the original college_id from the professor data
           setProfessor({
             first_name: professorData.first_name || "",
             middle_name: professorData.middle_name || "",
             last_name: professorData.last_name || "",
             extended_name: professorData.extended_name || "",
-            college_id: professorData.college_id?.toString() || "",
+            college_id: professorData.college_id || defaultCollegeId, // Use the original college_id or a valid default
             faculty_type: professorData.faculty_type || "Full-time",
             position: professorData.position || "Professor",
             time_availability: professorData.time_availability || {
@@ -488,6 +545,7 @@ export const EditProfessorModal: React.FC<EditProfessorModalProps> = ({
             specialization: specializationArray,
             email: professorData.email || "",
             status: professorData.status || "ACTIVE",
+            department: userDepartment,
           });
           
           // Set selected specializations for the dropdown
@@ -507,7 +565,7 @@ export const EditProfessorModal: React.FC<EditProfessorModalProps> = ({
       
       fetchData();
     }
-  }, [isOpen, professorId, userDepartment]);
+  }, [isOpen, professorId, userDepartment, userCollege]);
 
   const fetchSpecializations = async (department: string) => {
     try {
@@ -557,12 +615,46 @@ export const EditProfessorModal: React.FC<EditProfessorModalProps> = ({
     
     try {
       setSaving(true);
-      await axios.put(`http://localhost:3001/api/professors/${professorId}`, professor);
+      
+      // Ensure college_id is a valid number
+      let collegeIdToUse = professor.college_id;
+      if (typeof collegeIdToUse === 'string') {
+        const parsedId = parseInt(collegeIdToUse);
+        collegeIdToUse = isNaN(parsedId) ? defaultCollegeId : parsedId;
+      } else if (!collegeIdToUse && collegeIdToUse !== 0) {
+        collegeIdToUse = defaultCollegeId;
+      }
+      
+      // Create the data to send
+      const professorData = {
+        ...professor,
+        college_id: collegeIdToUse
+      };
+      
+      // Debug log
+      console.log("Submitting updated professor data:", professorData);
+      console.log("College ID being sent:", professorData.college_id, "Type:", typeof professorData.college_id);
+      
+      // Log each required field to check if any are missing
+      console.log("Required fields check:");
+      console.log("- first_name:", professorData.first_name, Boolean(professorData.first_name));
+      console.log("- last_name:", professorData.last_name, Boolean(professorData.last_name));
+      console.log("- college_id:", professorData.college_id, Boolean(professorData.college_id));
+      console.log("- faculty_type:", professorData.faculty_type, Boolean(professorData.faculty_type));
+      console.log("- position:", professorData.position, Boolean(professorData.position));
+      console.log("- status:", professorData.status, Boolean(professorData.status));
+      
+      await axios.put(`http://localhost:3001/api/professors/${professorId}`, professorData);
       onSuccess();
       onClose();
     } catch (err) {
       console.error("Error updating professor:", err);
-      setError("Failed to update professor. Please try again.");
+      if (axios.isAxiosError(err) && err.response) {
+        console.error("Server response:", err.response.data);
+        setError(`Failed to update professor: ${err.response.data.details || err.response.data.error || "Unknown error"}`);
+      } else {
+        setError("Failed to update professor. Please try again.");
+      }
     } finally {
       setSaving(false);
     }
@@ -605,18 +697,22 @@ export const EditProfessorModal: React.FC<EditProfessorModalProps> = ({
             </div>
           </div>
 
-          {/* College, Faculty Type & Position */}
+          {/* Department Information (Read-only) */}
+          <div>
+            <label className="block text-sm">Department</label>
+            <input 
+              type="text" 
+              value={userDepartment} 
+              className="w-full p-2 border rounded bg-gray-100" 
+              disabled 
+            />
+            <p className="text-xs text-gray-500 mt-1">
+              Professors can only be edited within your department
+            </p>
+          </div>
+
+          {/* Faculty Type & Position */}
           <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm">College *</label>
-              <select name="college_id" value={professor.college_id} onChange={handleChange} className="w-full p-2 border rounded">
-                {colleges.map(college => (
-                  <option key={college.college_id} value={college.college_id}>
-                    {college.college_name}
-                  </option>
-                ))}
-              </select>
-            </div>
             <div>
               <label className="block text-sm">Faculty Type *</label>
               <select name="faculty_type" value={professor.faculty_type} onChange={handleChange} className="w-full p-2 border rounded">
@@ -624,16 +720,15 @@ export const EditProfessorModal: React.FC<EditProfessorModalProps> = ({
                 <option value="Part-time">Part-time</option>
               </select>
             </div>
-          </div>
-
-          <div>
-            <label className="block text-sm">Position *</label>
-            <select name="position" value={professor.position} onChange={handleChange} className="w-full p-2 border rounded">
-              <option value="Professor">Professor</option>
-              <option value="Assistant Professor">Assistant Professor</option>
-              <option value="Associate Professor">Associate Professor</option>
-              <option value="Lecturer">Lecturer</option>
-            </select>
+            <div>
+              <label className="block text-sm">Position *</label>
+              <select name="position" value={professor.position} onChange={handleChange} className="w-full p-2 border rounded">
+                <option value="Professor">Professor</option>
+                <option value="Assistant Professor">Assistant Professor</option>
+                <option value="Associate Professor">Associate Professor</option>
+                <option value="Lecturer">Lecturer</option>
+              </select>
+            </div>
           </div>
 
           {/* Time Availability */}

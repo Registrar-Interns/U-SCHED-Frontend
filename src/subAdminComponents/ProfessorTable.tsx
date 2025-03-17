@@ -37,12 +37,24 @@ const ProfessorTable: React.FC = () => {
   const [showAddModal, setShowAddModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
   const [selectedProfessorId, setSelectedProfessorId] = useState<number | null>(null);
+  
+  // Get user department from localStorage
+  const userDepartment = localStorage.getItem("department") || "";
 
   const fetchProfessors = async () => {
     try {
+      setLoading(true);
+      
+      // Fetch all professors
       const res = await axios.get("http://localhost:3001/api/professors");
-      setProfessors(res.data);
-      setFilteredProfessors(res.data); // ✅ Ensure both states are updated
+      
+      // Filter professors by the user's department
+      const departmentProfessors = res.data.filter(
+        (prof: Professor) => prof.department === userDepartment
+      );
+      
+      setProfessors(departmentProfessors);
+      setFilteredProfessors(departmentProfessors);
       setLoading(false);
     } catch (err) {
       console.error("Fetch Error:", err);
@@ -52,8 +64,13 @@ const ProfessorTable: React.FC = () => {
   };
 
   useEffect(() => {
-    fetchProfessors();
-  }, []);
+    if (userDepartment) {
+      fetchProfessors();
+    } else {
+      setError("Department information not found. Please log in again.");
+      setLoading(false);
+    }
+  }, [userDepartment]);
 
   useEffect(() => {
     let filtered = [...professors];
@@ -113,7 +130,7 @@ const ProfessorTable: React.FC = () => {
   return (
     <div className="p-6 bg-white rounded shadow-md">
       <div className="flex justify-between items-center mb-4">
-        <h2 className="text-lg font-bold">Professors List</h2>
+        <h2 className="text-lg font-bold">Professors List - {userDepartment} Department</h2>
         <button
           className="bg-red-700 text-white px-4 py-2 rounded hover:bg-red-800"
           onClick={() => setShowAddModal(true)}
@@ -158,47 +175,53 @@ const ProfessorTable: React.FC = () => {
 
       {/* Table */}
       {!loading && !error && (
-        <table className="w-full border border-collapse">
-          <thead>
-            <tr className="bg-red-700 text-white">
-              <th className="p-2 border">Full Name</th>
-              <th className="p-2 border">Department</th>
-              <th className="p-2 border">Faculty Type</th>
-              <th className="p-2 border">Position</th>
-              <th className="p-2 border">Time Availability</th>
-              <th className="p-2 border">Bachelor's Degree</th>
-              <th className="p-2 border">Master's Degree</th>
-              <th className="p-2 border">Doctorate Degree</th>
-              <th className="p-2 border">Specialization</th>
-              <th className="p-2 border">Status</th>
-              <th className="p-2 border">Action</th>
-            </tr>
-          </thead>
-          <tbody>
-            {currentRows.map((prof) => (
-              <tr key={prof.professor_id} className="text-center">
-                <td className="p-2 border">{prof.full_name || "No Name Provided"}</td>
-                <td className="p-2 border">{prof.department}</td>
-                <td className="p-2 border">{prof.faculty_type}</td>
-                <td className="p-2 border">{prof.position}</td>
-                <td className="p-2 border">{formatTimeAvailability(prof.time_availability)}</td>
-                <td className="p-2 border">{prof.bachelorsDegree || "N/A"}</td>
-                <td className="p-2 border">{prof.mastersDegree || "N/A"}</td>
-                <td className="p-2 border">{prof.doctorateDegree || "N/A"}</td>
-                <td className="p-2 border">{prof.specialization || "N/A"}</td>
-                <td className="p-2 border">{prof.status}</td>
-                <td className="p-2 border">
-                  <button
-                    onClick={() => handleEditProfessor(prof.professor_id)}
-                    className="px-3 py-1 bg-orange-700 text-white rounded hover:bg-red-800"
-                  >
-                    EDIT
-                  </button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+        <>
+          {filteredProfessors.length === 0 ? (
+            <div className="text-center py-4 text-gray-500">
+              No professors found in the {userDepartment} department. Add a new professor to get started.
+            </div>
+          ) : (
+            <table className="w-full border border-collapse">
+              <thead>
+                <tr className="bg-red-700 text-white">
+                  <th className="p-2 border">Full Name</th>
+                  <th className="p-2 border">Faculty Type</th>
+                  <th className="p-2 border">Position</th>
+                  <th className="p-2 border">Time Availability</th>
+                  <th className="p-2 border">Bachelor's Degree</th>
+                  <th className="p-2 border">Master's Degree</th>
+                  <th className="p-2 border">Doctorate Degree</th>
+                  <th className="p-2 border">Specialization</th>
+                  <th className="p-2 border">Status</th>
+                  <th className="p-2 border">Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                {currentRows.map((prof) => (
+                  <tr key={prof.professor_id} className="text-center">
+                    <td className="p-2 border">{prof.full_name || "No Name Provided"}</td>
+                    <td className="p-2 border">{prof.faculty_type}</td>
+                    <td className="p-2 border">{prof.position}</td>
+                    <td className="p-2 border">{formatTimeAvailability(prof.time_availability)}</td>
+                    <td className="p-2 border">{prof.bachelorsDegree || "N/A"}</td>
+                    <td className="p-2 border">{prof.mastersDegree || "N/A"}</td>
+                    <td className="p-2 border">{prof.doctorateDegree || "N/A"}</td>
+                    <td className="p-2 border">{prof.specialization || "N/A"}</td>
+                    <td className="p-2 border">{prof.status}</td>
+                    <td className="p-2 border">
+                      <button
+                        onClick={() => handleEditProfessor(prof.professor_id)}
+                        className="px-3 py-1 bg-orange-700 text-white rounded hover:bg-red-800"
+                      >
+                        EDIT
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          )}
+        </>
       )}
 
       {/* Pagination */}
