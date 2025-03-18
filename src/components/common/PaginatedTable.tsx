@@ -15,17 +15,24 @@ interface PaginatedTableProps<T extends Record<string, unknown>> {
   columns: string[];
   data: T[];
   renderCell?: (row: T, column: string) => JSX.Element | string;
+  renderHeader?: (column: string) => JSX.Element | string;
   renderActions?: (row: T) => JSX.Element;
   filters?: ColumnFilter[];
+  tableClassName?: string;
+  departmentColor?: string;
 }
 
 export default function PaginatedTable<T extends Record<string, unknown>>({
   columns,
   data,
   renderCell,
+  renderHeader,
   renderActions,
   filters = [],
+  tableClassName = "",
+  departmentColor = "bg-green-600",
 }: PaginatedTableProps<T>) {
+  const hoverColor = departmentColor.replace('bg-', 'hover:bg-');
   const [currentPage, setCurrentPage] = useState(1);
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [searchTerm, setSearchTerm] = useState("");
@@ -75,7 +82,7 @@ export default function PaginatedTable<T extends Record<string, unknown>>({
       return [...Array(totalPages)].map((_, i) => (
         <button
           key={i}
-          className={`px-3 py-1 border rounded ${currentPage === i + 1 ? "bg-green-600 text-white" : "bg-gray-200 hover:bg-gray-300"}`}
+          className={`px-3 py-1 border rounded ${currentPage === i + 1 ? `${departmentColor} text-white` : "bg-gray-200 hover:bg-gray-300"}`}
           onClick={() => setCurrentPage(i + 1)}
         >
           {i + 1}
@@ -111,7 +118,7 @@ export default function PaginatedTable<T extends Record<string, unknown>>({
         pageNumbers.push(
           <button
             key={i}
-            className={`px-3 py-1 border rounded ${currentPage === i ? "bg-green-600 text-white" : "bg-gray-200 hover:bg-gray-300"}`}
+            className={`px-3 py-1 border rounded ${currentPage === i ? `${departmentColor} text-white` : "bg-gray-200 hover:bg-gray-300"}`}
             onClick={() => setCurrentPage(i)}
           >
             {i}
@@ -129,7 +136,7 @@ export default function PaginatedTable<T extends Record<string, unknown>>({
         pageNumbers.push(
           <button
             key="last"
-            className={`px-3 py-1 border rounded ${currentPage === totalPages ? "bg-green-600 text-white" : "bg-gray-200 hover:bg-gray-300"}`}
+            className={`px-3 py-1 border rounded ${currentPage === totalPages ? `${departmentColor} text-white` : "bg-gray-200 hover:bg-gray-300"}`}
             onClick={() => setCurrentPage(totalPages)}
           >
             {totalPages}
@@ -195,12 +202,16 @@ export default function PaginatedTable<T extends Record<string, unknown>>({
         </div>
       </div>
       <div className="overflow-x-auto">
-        <table className="min-w-full border-collapse">
+        <table className={`min-w-full border-collapse ${tableClassName}`}>
           <thead>
             <tr className="bg-gray-100 border-b border-gray-100 dark:border-white/[0.05]">
               {columns.map((col, index) => (
-                <th key={index} className="px-5 py-3 font-medium text-gray-500 text-start">
-                  {col}
+                <th key={index} className="text-start">
+                  {renderHeader ? renderHeader(col) : (
+                    <div className="px-5 py-3 font-medium text-gray-500">
+                      {col}
+                    </div>
+                  )}
                 </th>
               ))}
               {renderActions && <th className="px-5 py-3 font-medium text-gray-500 text-start">Actions</th>}
@@ -240,7 +251,7 @@ export default function PaginatedTable<T extends Record<string, unknown>>({
         {totalPages > 0 && (
           <div className="flex gap-2">
             <button
-              className={`px-3 py-1 border rounded ${currentPage === 1 ? "opacity-50 cursor-not-allowed" : "bg-green-600 text-white hover:bg-green-700"}`}
+              className={`px-3 py-1 border rounded ${currentPage === 1 ? "opacity-50 cursor-not-allowed" : `${departmentColor} text-white ${hoverColor}`}`}
               onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
               disabled={currentPage === 1}
             >
@@ -248,7 +259,7 @@ export default function PaginatedTable<T extends Record<string, unknown>>({
             </button>
             {renderPaginationNumbers()}
             <button
-              className={`px-3 py-1 border rounded ${currentPage === totalPages ? "opacity-50 cursor-not-allowed" : "bg-green-600 text-white hover:bg-green-700"}`}
+              className={`px-3 py-1 border rounded ${currentPage === totalPages ? "opacity-50 cursor-not-allowed" : `${departmentColor} text-white ${hoverColor}`}`}
               onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
               disabled={currentPage === totalPages}
             >

@@ -150,25 +150,6 @@ export default function ProfessorTable() {
     return typeof value === 'string' ? value : "N/A";
   };
 
-  // Create department filter options
-  const departmentFilters = useMemo(() => {
-    return [
-      { value: "all", label: "All Departments" },
-      ...colleges.map(college => ({
-        value: college.college_code,
-        label: college.college_name
-      }))
-    ];
-  }, [colleges]);
-
-  // Create filters for PaginatedTable
-  const tableFilters = [
-    {
-      column: "Department_filter",
-      options: departmentFilters
-    }
-  ];
-
   if (loading) {
     return <div className="p-4 text-center">Loading professors...</div>;
   }
@@ -188,7 +169,7 @@ export default function ProfessorTable() {
             value={selectedDepartment}
             onChange={(e) => setSelectedDepartment(e.target.value)}
           >
-            <option value="all">All Departments</option>
+            <option value="all">All</option>
             {colleges.map((college) => (
               <option key={college.college_id} value={college.college_code}>
                 {college.college_name}
@@ -201,7 +182,6 @@ export default function ProfessorTable() {
         columns={columns} 
         data={formattedData} 
         renderCell={renderCell}
-        filters={tableFilters}
       />
     </div>
   );

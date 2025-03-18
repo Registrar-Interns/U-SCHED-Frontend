@@ -1,5 +1,6 @@
 import React from "react";
 import { Table, TableBody, TableCell, TableHeader, TableRow } from "../ui/table";
+import { getDepartmentHeaderColor } from "../../utils/departmentBranding";
 
 // The shape of each course
 interface Course {
@@ -23,50 +24,9 @@ interface CurriculumTablesProps {
   department: string;    // department to base the header color on
 }
 
-// Branding map (can be moved to a shared file if needed)
-const departmentBranding: Record<string, { headerColor: string; collegeName: string; logo: string }> = {
-  CCS: {
-    headerColor: "bg-orange-500",
-    collegeName: "College of Computing Studies",
-    logo: "/images/ccs-logo.jpg",
-  },
-  COE: {
-    headerColor: "bg-red-600",
-    collegeName: "College of Engineering",
-    logo: "/images/coe-logo.jpg",
-  },
-  CAS: {
-    headerColor: "bg-red-800",
-    collegeName: "College of Arts and Sciences",
-    logo: "/images/cas-logo.jpg",
-  },
-  CHAS: {
-    headerColor: "bg-green-500",
-    collegeName: "College of Humanities and Social Sciences",
-    logo: "/images/chas-logo.jpg",
-  },
-  COED: {
-    headerColor: "bg-blue-500",
-    collegeName: "College of Education",
-    logo: "/images/coed-logo.jpg",
-  },
-  CBAA: {
-    headerColor: "bg-yellow-500",
-    collegeName: "College of Business and Accountancy",
-    logo: "/images/cbaa-logo.jpg",
-  },
-  default: {
-    headerColor: "bg-green-600",
-    collegeName: "U-SCHED",
-    logo: "/images/usched-logo.png",
-  },
-};
-
 const CurriculumTables: React.FC<CurriculumTablesProps> = ({ year, courses, department }) => {
-  // Determine header color based on the provided department prop.
-  // Ensure that the department key is uppercase to match the branding map.
-  const deptKey = department.toUpperCase();
-  const headerColor = departmentBranding[deptKey]?.headerColor || departmentBranding.default.headerColor;
+  // Determine header color based on the provided department prop
+  const headerColor = getDepartmentHeaderColor(department);
   const headerCellClass = `px-5 py-3 font-medium text-white ${headerColor} border border-gray-300`;
 
   // If year is "ELECTIVES", group by distinct semester strings

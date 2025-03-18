@@ -12,6 +12,7 @@ import {
   ConstraintIcon,
 } from "../icons";
 import { useSidebar } from "../context/SidebarContext";
+import { getDepartmentBranding } from "../utils/departmentBranding";
 
 // Department branding map
 const departmentBranding: Record<string, { headerColor: string; collegeName: string; logo: string }> = {
@@ -201,12 +202,24 @@ const AppSidebar: React.FC = () => {
       ? subAdminNavItems
       : adminNavItems;
 
-  // 1) Decide which branding to use for the logo
-  let sidebarLogo = departmentBranding.default.logo; // default
-  if (userType === "PROFESSOR" && (position === "Dean" || position === "Department Chair")) {
-    const branding = departmentBranding[department] || departmentBranding.default;
-    sidebarLogo = branding.logo;
-  }
+  // Get department branding
+  const branding = getDepartmentBranding(department);
+  
+  // Get department logo
+  const sidebarLogo = userType === "PROFESSOR" && (position === "Dean" || position === "Department Chair")
+    ? branding.logo 
+    : departmentBranding.default.logo;
+    
+  // Get menu active colors for department (only for subadmins)
+  const isSubAdmin = userType === "PROFESSOR" && (position === "Dean" || position === "Department Chair");
+  const menuActiveColor = isSubAdmin ? branding.menuActiveColor : "text-green-600";
+  const menuActiveBgColor = isSubAdmin ? branding.menuActiveBgColor : "bg-green-50";
+  const menuIconColor = isSubAdmin ? branding.menuIconColor : "text-green-600";
+  
+  const menuIconDarkColor = menuIconColor?.replace("text-", "dark:text-") || "dark:text-green-400";
+  const menuBgDarkColor = isSubAdmin 
+    ? `dark:bg-${menuIconColor?.split('-')[1]}-500/[0.12]` 
+    : "dark:bg-green-500/[0.12]";
 
   const toggleMenu = (key: string) => {
     setOpenMenus((prev) => ({
@@ -222,6 +235,17 @@ const AppSidebar: React.FC = () => {
       {items.map((nav, index) => {
         const menuKey = `${parentKey}-${index}`;
         const isOpen = openMenus[menuKey];
+        const isMenuActive = isActive(nav.path);
+        
+        // Create dynamic classes based on department only for active items
+        const dynamicActiveClass = isMenuActive
+          ? `${menuActiveBgColor} ${menuActiveColor} ${menuBgDarkColor} ${menuIconDarkColor}`
+          : "menu-item-inactive";
+        
+        // Create dynamic icon classes based on department only for active items
+        const dynamicIconClass = isMenuActive
+          ? `${menuIconColor} ${menuIconDarkColor}`
+          : "menu-item-icon-inactive";
 
         return (
           <li key={menuKey}>
@@ -247,14 +271,12 @@ const AppSidebar: React.FC = () => {
                 <Link
                   to={nav.path}
                   className={`menu-item group ${
-                    isActive(nav.path) ? "menu-item-active" : "menu-item-inactive"
+                    isMenuActive ? dynamicActiveClass : "menu-item-inactive"
                   }`}
                 >
                   <span
                     className={`menu-item-icon-size ${
-                      isActive(nav.path)
-                        ? "menu-item-icon-active"
-                        : "menu-item-icon-inactive"
+                      isMenuActive ? dynamicIconClass : "menu-item-icon-inactive"
                     }`}
                   >
                     {nav.icon}

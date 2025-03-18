@@ -5,66 +5,22 @@ import { useSidebar } from "../context/SidebarContext";
 import { ThemeToggleButton } from "../components/common/ThemeToggleButton";
 // import NotificationDropdown from "../components/header/NotificationDropdown";
 import UserDropdown from "../components/header/UserDropdown";
-
-// 1) Department branding map
-const departmentBranding: Record<string, { headerColor: string; collegeName: string; logo: string }> = {
-  CCS: {
-    headerColor: "bg-orange-500",
-    collegeName: "College of Computing Studies",
-    logo: "/images/ccs-logo.jpg",
-  },
-  COE: {
-    headerColor: "bg-red-600",
-    collegeName: "College of Engineering",
-    logo: "/images/coe-logo.jpg",
-  },
-  CAS: {
-    headerColor: "bg-red-800",
-    collegeName: "College of Arts and Sciences",
-    logo: "/images/cas-logo.jpg",
-  },
-  CHAS: {
-    headerColor: "bg-green-500",
-    collegeName: "College of Humanities and Social Sciences",
-    logo: "/images/chas-logo.jpg",
-  },
-  COED: {
-    headerColor: "bg-blue-500",
-    collegeName: "College of Education",
-    logo: "/images/coed-logo.jpg",
-  },
-  CBAA: {
-    headerColor: "bg-yellow-500",
-    collegeName: "College of Business and Accountancy",
-    logo: "/images/cbaa-logo.png",
-  },
-  default: {
-    headerColor: "bg-green-600",
-    collegeName: "U-SCHED",
-    logo: "/images/usched-logo.png",
-  },
-};
+import { getDepartmentBranding } from "../utils/departmentBranding";
 
 const AppHeader: React.FC = () => {
   const [isApplicationMenuOpen, setApplicationMenuOpen] = useState(false);
 
   const { isMobileOpen, toggleSidebar, toggleMobileSidebar } = useSidebar();
 
-  // 2) Read user info from localStorage
+  // Read user info from localStorage
   const userType = localStorage.getItem("userType") || "";
   const position = localStorage.getItem("position") || "";
   const department = localStorage.getItem("department") || "";
 
-  // 3) Decide which branding to use
-  let headerColor = departmentBranding.default.headerColor;
-  let collegeName = departmentBranding.default.collegeName;
-
-  // If sub-admin (Dean/Chair) and we have a known department
-  if (userType === "PROFESSOR" && (position === "Dean" || position === "Department Chair")) {
-    const branding = departmentBranding[department] || departmentBranding.default;
-    headerColor = branding.headerColor;
-    collegeName = branding.collegeName;
-  }
+  // Get department branding
+  const branding = getDepartmentBranding(department);
+  const headerColor = branding.headerColor;
+  const collegeName = branding.collegeName;
 
   const handleToggle = () => {
     if (window.innerWidth >= 991) {
