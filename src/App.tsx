@@ -17,9 +17,9 @@ import RoomPage from "./pages/RoomPage/RoomPage";
 
 // import SubAdminDashboard from "./subAdminPages/SubAdminDashboard";
 // import SchedulePage from "./subAdminPages/SchedulePage";
-// import RoomPlottingPage from "./subAdminPages/RoomPlottingPage";
+import RoomPlottingPage from "./subAdminPages/RoomPlottingPage";
 import SubAdminCurriculumPage from "./subAdminPages/SubAdminCurriculumPage";
-// import SectionsPage from "./subAdminPages/SectionsPage";
+import SectionsPage from "./subAdminPages/SectionsPage";
 import SubAdminProf from "./subAdminPages/SubAdminProf";
 
 // Curriculum Pages
@@ -69,6 +69,8 @@ export default function App() {
 
             {/* Sub-admin routes */}
             <Route path="/professors" element={<SubAdminProf />} />
+            <Route path="/sections" element={<SectionsPage />} />
+            <Route path="/room-plotting" element={<RoomPlottingPage />} />
             {/* <Route path="/schedule" element={<SchedulePage />} />
             <Route path="/room-plotting" element={<RoomPlottingPage />} />
             <Route path="/curriculum" element={<SubAdminCurriculumPage />} />

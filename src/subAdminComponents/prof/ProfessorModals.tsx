@@ -133,7 +133,7 @@ export const AddProfessorModal: React.FC<AddProfessorModalProps> = ({
 
   const fetchSpecializations = async (department: string) => {
     try {
-      const response = await axios.get(`http://localhost:3001/api/curriculum/curriculum_courses?department=${department}`);
+      const response = await axios.get(`http://localhost:3001/api/curriculum/curriculum_courses?department=${department}&excludeGenEd=true`);
       
       if (!Array.isArray(response.data)) {
         console.error("Invalid response format, expected an array:", response.data);
@@ -220,10 +220,45 @@ export const AddProfessorModal: React.FC<AddProfessorModalProps> = ({
     }
   };
 
+  // Function to reset form to initial values
+  const resetForm = () => {
+    setProfessor({
+      first_name: "",
+      middle_name: "",
+      last_name: "",
+      extended_name: "",
+      college_id: collegeId,
+      faculty_type: "Full-time",
+      position: "Professor",
+      time_availability: {
+        monday: "",
+        tuesday: "",
+        wednesday: "",
+        thursday: "",
+        friday: "",
+        saturday: "",
+        sunday: "",
+      },
+      bachelorsDegree: "",
+      mastersDegree: "",
+      doctorateDegree: "",
+      specialization: [] as string[],
+      email: "",
+      status: "ACTIVE",
+      department: userDepartment,
+    });
+    setSelectedSpecializations([]);
+  };
+
+  const handleClose = () => {
+    resetForm();
+    onClose();
+  };
+
   return (
     <Modal
       isOpen={isOpen}
-      onClose={onClose}
+      onClose={handleClose}
       className="max-w-4xl"
       headerText="Add New Professor"
       headerImage="/images/pnc-bg.jpg"
@@ -275,18 +310,19 @@ export const AddProfessorModal: React.FC<AddProfessorModalProps> = ({
           <div className="grid grid-cols-2 gap-4">
             <div>
               <label className="block text-sm">Faculty Type *</label>
-              <select name="faculty_type" value={professor.faculty_type} onChange={handleChange} className="w-full p-2 border rounded">
-                <option value="Full-time">Full-time</option>
+              <select name="faculty_type" value={professor.faculty_type} onChange={handleChange} className="w-full p-2 border border-orange-300 rounded focus:border-orange-500 focus:ring focus:ring-orange-200">
+                <option value="Full-time Permanent">Full-time Permanent</option> 
+                <option value="Full-time Temporary">Full-time Temporary</option>
+                <option value="Full-time COS">Full-time COS</option>
                 <option value="Part-time">Part-time</option>
               </select>
             </div>
             <div>
               <label className="block text-sm">Position *</label>
               <select name="position" value={professor.position} onChange={handleChange} className="w-full p-2 border rounded">
-                <option value="Professor">Professor</option>
-                <option value="Assistant Professor">Assistant Professor</option>
-                <option value="Associate Professor">Associate Professor</option>
-                <option value="Lecturer">Lecturer</option>
+                <option value="Professor">Dean</option>
+                <option value="Assistant Professor">Department Chair</option>
+                <option value="Associate Professor">Professor</option>
               </select>
             </div>
           </div>
@@ -426,7 +462,7 @@ export const AddProfessorModal: React.FC<AddProfessorModalProps> = ({
             </button>
             <button 
               type="button" 
-              onClick={onClose} 
+              onClick={handleClose} 
               className="flex-1 bg-gray-300 text-gray-800 p-2 rounded"
               disabled={saving}
             >
@@ -488,12 +524,50 @@ export const EditProfessorModal: React.FC<EditProfessorModalProps> = ({
     department: userDepartment,
   });
 
+  // Function to reset form to initial values for EditProfessorModal
+  const resetForm = () => {
+    setProfessor({
+      first_name: "",
+      middle_name: "",
+      last_name: "",
+      extended_name: "",
+      college_id: defaultCollegeId,
+      faculty_type: "Full-time",
+      position: "Professor",
+      time_availability: {
+        monday: "",
+        tuesday: "",
+        wednesday: "",
+        thursday: "",
+        friday: "",
+        saturday: "",
+        sunday: "",
+      },
+      bachelorsDegree: "",
+      mastersDegree: "",
+      doctorateDegree: "",
+      specialization: [] as string[],
+      email: "",
+      status: "ACTIVE",
+      department: userDepartment,
+    });
+    setSelectedSpecializations([]);
+  };
+
+  const handleClose = () => {
+    resetForm();
+    onClose();
+  };
+
   // Fetch professor data and specializations
   useEffect(() => {
     if (isOpen && professorId) {
       const fetchData = async () => {
         try {
           setLoading(true);
+          
+          // Reset form before fetching new data
+          resetForm();
           
           // Fetch professor data
           const professorResponse = await axios.get(`http://localhost:3001/api/professors/${professorId}`);
@@ -569,7 +643,7 @@ export const EditProfessorModal: React.FC<EditProfessorModalProps> = ({
 
   const fetchSpecializations = async (department: string) => {
     try {
-      const response = await axios.get(`http://localhost:3001/api/curriculum/curriculum_courses?department=${department}`);
+      const response = await axios.get(`http://localhost:3001/api/curriculum/curriculum_courses?department=${department}&excludeGenEd=true`);
       
       if (!Array.isArray(response.data)) {
         console.error("Invalid response format, expected an array:", response.data);
@@ -663,7 +737,7 @@ export const EditProfessorModal: React.FC<EditProfessorModalProps> = ({
   return (
     <Modal
       isOpen={isOpen}
-      onClose={onClose}
+      onClose={handleClose}
       className="max-w-4xl"
       headerText="Edit Professor"
       headerImage="/images/pnc-bg.jpg"
@@ -715,8 +789,10 @@ export const EditProfessorModal: React.FC<EditProfessorModalProps> = ({
           <div className="grid grid-cols-2 gap-4">
             <div>
               <label className="block text-sm">Faculty Type *</label>
-              <select name="faculty_type" value={professor.faculty_type} onChange={handleChange} className="w-full p-2 border rounded">
-                <option value="Full-time">Full-time</option>
+              <select name="faculty_type" value={professor.faculty_type} onChange={handleChange} className="w-full p-2 border border-orange-300 rounded focus:border-orange-500 focus:ring focus:ring-orange-200">
+                <option value="Full-time Permanent">Full-time Permanent</option> 
+                <option value="Full-time Temporary">Full-time Temporary</option>
+                <option value="Full-time COS">Full-time COS</option>
                 <option value="Part-time">Part-time</option>
               </select>
             </div>
@@ -866,7 +942,7 @@ export const EditProfessorModal: React.FC<EditProfessorModalProps> = ({
             </button>
             <button 
               type="button" 
-              onClick={onClose} 
+              onClick={handleClose} 
               className="flex-1 bg-gray-300 text-gray-800 p-2 rounded"
               disabled={saving}
             >
